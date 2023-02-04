@@ -1,0 +1,84 @@
+create table student
+(
+sid int primary key ,
+sname varchar(20) ,
+sclass char(5) ,
+u_1 int check (u_1<=30 and u_1>=0) ,
+u_2 int check (u_2<=30 and u_2>=0),
+q_1 int check (q_1<10 and q_1>=0),
+q_2 int check (q_2<10 and q_1>=0),
+self int check (self<=10 and self>=0),
+internal int check (internal<=60 and internal>=0),
+cie int
+);
+
+insert into student values(1,'ram','A',30,28,8,6,8,45,null);
+insert into student values(2,'siya','B',17,15,4,6,8,35,null);
+insert into student values(3,'radhe','C',24,25,8,8,8,55,null);
+insert into student values(4,'situ','A',30,30,10,10,10,60,null);
+insert into student values(5,'ditu','B',11,12,4,3,3,15,null);
+
+ select *from student ;
++-----+-------+--------+------+------+------+------+------+----------+------+
+| sid | sname | sclass | u_1  | u_2  | q_1  | q_2  | self | internal | cie  |
++-----+-------+--------+------+------+------+------+------+----------+------+
+|   1 | ram   | A      |   30 |   28 |    8 |    6 |    8 |       45 | NULL |
+|   2 | siya  | B      |   17 |   15 |    4 |    6 |    8 |       35 | NULL |
+|   3 | radhe | C      |   24 |   25 |    8 |    8 |    8 |       55 | NULL |
+|   4 | situ  | A      |   30 |   30 |   10 |   10 |   10 |       60 | NULL |
+|   5 | ditu  | B      |   11 |   12 |    4 |    3 |    3 |       15 | NULL |
++-----+-------+--------+------+------+------+------+------+----------+------+
+
+drop function mark //
+create function mark(u int ,q int ,s int ,i int)
+returns int
+begin
+	declare cie int;
+	set cie=u+q+s+i;
+	return cie;
+end;
+
+drop procedure mark//
+create procedure mark(id int)
+begin
+	declare u1,u2,ut,q1,q2,qt,sc,inter,s int;
+	select u_1 , u_2 ,q_1 , q_2 , self , internal , cie into u1,u2,q1,q2,sc,inter , s from student where sid=id;
+	set ut=((u1*5)/30) + ((u2*5)/30);
+	set qt=((q1*2.5)/10) + ((q2*2.5)/10);
+	set inter=((inter*15)/60);
+    select mark (ut,qt,sc,inter) into s from student where sid=id;
+	update student set cie = s where sid=id;
+
+end;
+
+
+create function mark1(u1 int,u2 int ,q1 int ,q2 int ,sc int ,inter int)
+returns int
+begin
+	declare ut,qt,cie int;
+	set ut=((u1*5)/30) + ((u2*5)/30);
+	set qt=((q1*2.5)/10) + ((q2*2.5)/10);
+	set inter=((inter*15)/60);
+	set cie=ut+qt+sc+inter;
+	return cie;
+end;
+
+create procedure mark1(id int)
+begin
+	declare s int;
+	select mark1(u_1,u_2,q_1,q_2,self,internal) into s from student where sid=id;
+	update student set cie = s where sid=id;
+end;
+
+
+	 select *from student //
++-----+-------+--------+------+------+------+------+------+----------+------+
+| sid | sname | sclass | u_1  | u_2  | q_1  | q_2  | self | internal | cie  |
++-----+-------+--------+------+------+------+------+------+----------+------+
+|   1 | ram   | A      |   30 |   28 |    8 |    6 |    8 |       45 |   33 |
+|   2 | siya  | B      |   17 |   15 |    4 |    6 |    8 |       35 |   25 |
+|   3 | radhe | C      |   24 |   25 |    8 |    8 |    8 |       55 |   34 |
+|   4 | situ  | A      |   30 |   30 |   10 |   10 |   10 |       60 |   40 |
+|   5 | ditu  | B      |   11 |   12 |    4 |    3 |    3 |       15 |   13 |
++-----+-------+--------+------+------+------+------+------+----------+------+
+

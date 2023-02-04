@@ -1,0 +1,28 @@
+create procedure arith()
+begin
+	declare i,j,sum , sub , prod , d int;
+	set i=10;
+	set j=20;
+	set sum=i+j;
+	set sub=j-i;
+	set prod=i*j;
+	set d=i/j;
+	select i,j,sum,sub,prod,div;
+end;
+
+create procedure a()
+BEGIN
+	DECLARE i,j,sum  int;
+	SET i=10;
+	SET j=20;
+	SET sum=i+j;
+	SELECT i,j,sum;
+END;
+
+create procedure dp()
+begin
+		declare i,j int;
+		set i=10;
+		set j=10;
+		select i,j;
+end;

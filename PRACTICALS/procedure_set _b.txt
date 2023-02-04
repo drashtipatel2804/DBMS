@@ -1,0 +1,53 @@
+//SET B
+
+create table movie
+(
+mid int primary key ,
+mname char(20),
+mtype char(20),
+viewer int ,
+year int ,
+rate float(10,2)
+);
+
+insert into movie values (1,'kgf2','south',1000000,2022,null);
+insert into movie values (2,'kgf','south',10000,2017,null);
+insert into movie values (3,'bahubali','south',100,2022,null);
+insert into movie values (4,'surya','south',50002,2022,null);
+insert into movie values (5,'dilgiri','south',2000,2022,null);
+
+
+create procedure rate(id int)
+begin
+	declare v int;
+	declare r float(10,2);
+	select rate , viewer into r ,v from movie where mid=id;
+	case
+	when v>100000 then
+	set r=5.0;
+	when v>50000 then 
+	set r=4.0;
+	when v>10000 then
+	set r=3.5;
+	when v>5000 then 
+	set r=3.0;
+	when v>2000 then
+	set r=2.5;
+	else
+	set r=2;
+	end case;
+	update movie set rate=r where mid=id;
+end; 
+
+select *from movie //
++-----+----------+-------+---------+------+------+
+| mid | mname    | mtype | viewer  | year | rate |
++-----+----------+-------+---------+------+------+
+|   1 | kgf2     | south | 1000000 | 2022 | 5.00 |
+|   2 | kgf      | south |   10000 | 2017 | 3.00 |
+|   3 | bahubali | south |     100 | 2022 | 2.00 |
+|   4 | surya    | south |   50002 | 2022 | 4.00 |
+|   5 | dilgiri  | south |    2000 | 2022 | 2.00 |
++-----+----------+-------+---------+------+------+
+5 rows in set (0.00 sec)
+

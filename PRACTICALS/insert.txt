@@ -1,0 +1,13 @@
+root
+create table student
+(
+ID int not null primary key,
+NAME char(50) not null
+);
+
+LOAD DATA LOCAL INFILE "C:\Users\patol\OneDrive\Documents" INTO TABLE student
+FIELDS TERMINATED BY ','
+LINES TERMINATED BY '\n'
+(ID , NAME );
+
+"C:\Users\patol\OneDrive\Desktop\Book1.csv"

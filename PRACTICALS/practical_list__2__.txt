@@ -1,0 +1,416 @@
+ 
+Student master(Sid,Sname,Class,Sem, gender, city)
+Leave master( Lid, LeaveType, Stud_id, Reason, Status
+
+create table stud_mst
+(
+sid int not null primary key ,
+sname char(50) not null ,
+class char(5) ,
+sem char(5) ,
+gender char(5) ,
+city char(50)
+);
+
+
+create procedure data1(in id int , name char(50) , sclass char(5) , s_sem char(5) , s_gender char(5) , s_city char(50))
+begin
+	insert into stud_mst values(id ,name , sclass , s_sem , s_gender , s_city);
+end;
+
+call data1(1,'ram', 'a',1,'m','surat') //
+call data1(2,'kamini', 'a',4,'f','vapi') //
+call data1(3,'jam', 'a',1,'m','navsari') //
+call data1(4,'dam', 'a',2,'m','surat') //
+call data1(5,'nam', 'a',1,'m','surat') //
+
++-----+--------+-------+------+--------+---------+
+| sid | sname  | class | sem  | gender | city    |  
++-----+--------+-------+------+--------+---------+
+|   1 | ram    | a     | 1    | m      | surat   |
+|   2 | kamini | a     | 4    | f      | vapi    |
+|   3 | jam    | a     | 1    | m      | navsari |
+|   4 | dam    | a     | 2    | m      | surat   |
+|   5 | nam    | a     | 1    | m      | surat   |
++-----+--------+-------+------+--------+---------+
+
+
+create table leave_mst
+(
+lid int not null primary key ,
+sid int not null references stud_mst(sid) ,
+reason char(100) not null ,
+status char(5)
+);
+
+create procedure data2 (in id int , s_id int , l_reason char(100) , l_status char(5) )
+begin
+	insert into leave_mst values(id , s_id , l_reason , l_status);
+end; 
+
+call data2(1,1,'headache', 'a') //
+call data2(2,2,'fever', 'a') //
+call data2(3,1,'function', 'a') //
+call data2(4,4,'null', 'r') //
+call data2(5,5,'headache', 'a') //
+
+ select *from leave_mst //
++-----+-----+----------+--------+
+| lid | sid | reason   | status |
++-----+-----+----------+--------+
+|   1 |   1 | headache | a      |
+|   2 |   2 | fever    | a      |
+|   3 |   1 | function | a      |
+|   4 |   4 | null     | r      |
+|   5 |   5 | headache | a      |
++-----+-----+----------+--------+
+
+Mitsu shah studying in BMIIT, 2nd semester. Her counselor wants to 
+check total numbers of leave applied by Ram and total number of 
+granted leave of that student. Write a procedure to implement above 
+functionality and display information in a proper format.
+Consider table:
+
+create procedure l_count (in name char(50))
+begin
+	select count(lid) from leave_mst where sid IN (select sid from stud_mst where sname=name);
+end;
+
+
+mysql> call l_count('ram')//
++------------+
+| count(lid) |
++------------+
+|          2 |
++------------+
+
+Counselor of 1st semester wants to identify number of boys, number of 
+girls under her counseling and number of students coming from “surat” 
+city. Write a procedure to implement above functionality and display 
+result in proper format. Consider table of above question: 1
+
+create procedure lcount()
+begin
+	select count(sid)from stud_mst where city='surat' and sem=1;
+end;   
+
+call lcount //
++------------+
+| count(sid) |
++------------+
+|          2 |
++------------+
+
+
+
+
+In company, worker efficiency is determined on the basis of required to
+complete a particular job. If time taken by the worker is between 2-4
+hours, then the worker is said to be high efficient. If the time required by
+the worker is between 4-6 hours, then the worker is ordered to improve
+efficiency. If time is between 6-8 hours, the worker is given training to
+improve his efficiency, and if the time taken by the worker is more than 8
+hours, then the worker is not eligible for company. Write a procedure to
+take time that is taken by worker to complete a job from keyboard and
+display the appropriate category of worker on the screen.
+consider table:
+Employee(eid,ename,department,designation,worker effiecncy,status)
+
+
+create table emp
+(
+eid int not null primary key ,
+ename char(50) ,
+edep char(50) ,
+edesi char(50) ,
+eeffi varchar(50) ,
+estatus int 
+);
+
+create procedure data2(in id int , name char(50) , dep char(50) , desi char(50) , effi varchar(50) , status int)
+begin
+	insert into emp values (id,name,dep,desi,effi,status);
+end;
+
+call data2(1,'ram','it','emp','null',null)//
+call data2(2,'radha','it','emp','null',null)//
+call data2(3,'sita','it','emp','null',null)//
+call data2(4,'krishna','it','emp','null',null)//
+call data2(5,'ashish','it','emp','null',null)//
+
+select *from emp //
++-----+---------+------+-------+-------+---------+
+| eid | ename   | edep | edesi | eeffi | estatus |
++-----+---------+------+-------+-------+---------+
+|   1 | ram     | it   | emp   | null  |    NULL |
+|   2 | radha   | it   | emp   | null  |    NULL |
+|   3 | sita    | it   | emp   | null  |    NULL |
+|   4 | krishna | it   | emp   | null  |    NULL |
+|   5 | ashish  | it   | emp   | null  |    NULL |
++-----+---------+------+-------+-------+---------+
+
+create procedure e_effi (in id int , status int)
+begin
+	declare effi varchar(50) ;
+	select eeffi into effi from emp where eid=id;
+	if (status between 2 and 4 ) then 
+	set effi='high';
+	elseif(status between 4 and 6) then
+	set effi='improve';
+	elseif (status between 6 and 8) then
+	set effi='train for improving';
+	else
+	set effi='not eligible';
+	end if;
+	update emp set eeffi=effi , estatus=status  where eid=id;
+end;
+
+call e_effi (1,3) //
+mysql> call e_effi (2,5) //
+call e_effi (3,8) //
+mysql> call e_effi (4,7) //
+mysql> call e_effi (5,10) //
+
+ select *from emp //
++-----+---------+------+-------+---------------------+---------+
+| eid | ename   | edep | edesi | eeffi               | estatus |
++-----+---------+------+-------+---------------------+---------+
+|   1 | ram     | it   | emp   | high                |       3 |
+|   2 | radha   | it   | emp   | train for improving |       8 |
+|   3 | sita    | it   | emp   | train for improving |       8 |
+|   4 | krishna | it   | emp   | train for improving |       7 |
+|   5 | ashish  | it   | emp   | not eligible        |      10 |
++-----+---------+------+-------+---------------------+---------+
+
+
+Mr. John having employee id emp050 working as a Developer in a Lemon
+Technology. John wants to know how much increment he will get in this
+Year. Help Mr. John to find his updated salary using procedure.
+Company Criteria for Increment as follows.
+ Give increment of 3000 Rs if experience more than 3 Year.
+ Give increment of 2000 Rs if experience more than 1Year.
+ Give increment of 5000 Rs, if experience more than 5 Year
+ No increment if experience less than 1Year..
+Consider table:
+Employee (Id, Name, Salary, Dept, Designation, No_of_Experience)
+
+create table tbl_emp 
+(
+eid int not null primary key ,
+eename char(50) ,
+esalary int ,
+edep char(50) ,
+edesi char(50) ,
+eexp int
+);
+
+create procedure data3(in id int , name char(50) , salary int , dep char(50) , desi char(50) , exp int)
+begin
+	insert into tbl_emp values(id,name,salary,dep,desi,exp);
+end;
+
+call data3(050,'mr.john',50000,'lemon technology ','developer',null)//
+
+select *from tbl_emp //
++-----+---------+---------+------------------+-----------+------+
+| eid | eename  | esalary | edep             | edesi     | eexp |
++-----+---------+---------+------------------+-----------+------+
+|  50 | mr.john |   50000 | lemon technology | developer | NULL |
++-----+---------+---------+------------------+-----------+------+
+
+create procedure incr(in id int ,exp int)
+begin
+	declare inc int;
+	if(exp>5) then
+	set inc=5000;
+	elseif (exp>3) then
+	set inc=3000;
+	elseif(exp>1) then
+	set inc=1000;
+	else
+	set inc=0;
+	end if;
+	update tbl_emp set eexp=exp , esalary=esalary+inc where eid=id;
+end;
+
+ call incr(50 , 8) //
+Query OK, 1 row affected (0.04 sec)
+
+mysql> select *from tbl_emp //
++-----+---------+---------+------------------+-----------+------+
+| eid | eename  | esalary | edep             | edesi     | eexp |
++-----+---------+---------+------------------+-----------+------+
+|  50 | mr.john |   55000 | lemon technology | developer |    8 |
++-----+---------+---------+------------------+-----------+------+
+
+“ZINK Corporation “is giving bonus in diwali to Mr. Varma having 
+employee id E202 as per designation of employee. Bonus will be directly 
+added in salary account. If employee is tester then give raise of 12%, if 
+developer then gives raise of 10%, if manager, raise salary by 15%, for 
+other department gives raise of 5%.
+[Must use concept of Switch case] 
+Consider table:
+Employeemaster (eno,ename,designation,salary, joing_date
+
+create table emp
+(
+eno int not null primary key,
+ename char(50) ,
+edesi char(20) ,
+esalary int ,
+ejoin_date date
+);
+
+create procedure dataemp(in no int , name char(50) , desi char(20) , salary int , join_date date)
+begin
+	insert into emp values(no , name , desi, salary , join_date);
+end;
+	
+call dataemp(1,'dittu','tester',50000,'2000-04-04');
+call dataemp(2,'sittu','developer',60000,'2000-04-05');
+call dataemp(3,'mittu','manager',70000,'2000-04-04');
+call dataemp(4,'kittu','it',80000,'2000-04-04');
+call dataemp(5,'rittu','tester',50000,'2000-04-04');
+
+ select *from emp //
++-----+-------+-----------+---------+------------+
+| eno | ename | edesi     | esalary | ejoin_date |
++-----+-------+-----------+---------+------------+
+|   1 | dittu | tester    |   50000 | 2000-04-04 |
+|   2 | sittu | developer |   60000 | 2000-04-05 |
+|   3 | mittu | manager   |   70000 | 2000-04-04 |
+|   4 | kittu | it        |   80000 | 2000-04-04 |
+|   5 | rittu | tester    |   50000 | 2000-04-04 |
++-----+-------+-----------+---------+------------+
+
+create procedure sinc(in no int)
+begin
+	declare desi char(20);
+	declare s int;
+	select esalary into s from emp where eno=no;
+	select edesi into desi from emp where eno=no;
+	case desi
+	when 'tester' then
+	set s=s+(s*12/100);
+	when 'developer' then
+	set s=s+(s*10/100);
+	when 'manager' then
+	set s=s+(s*15/100);
+	else
+	set s=s+(s*5/100);
+	end case;
+	update emp set esalary=s where eno=no;
+end;
+
+call sinc(1)//
+call sinc(2)//
+call sinc(3)//
+call sinc(4)//
+call sinc(5)//
+
+
+ select *from emp //
++-----+-------+-----------+---------+------------+
+| eno | ename | edesi     | esalary | ejoin_date |
++-----+-------+-----------+---------+------------+
+|   1 | dittu | tester    |   56000 | 2000-04-04 |
+|   2 | sittu | developer |   66000 | 2000-04-05 |
+|   3 | mittu | manager   |   80500 | 2000-04-04 |
+|   4 | kittu | it        |   84000 | 2000-04-04 |
+|   5 | rittu | tester    |   56000 | 2000-04-04 |
++-----+-------+-----------+---------+------------+
+
+Domestic consumer can calculate the bill using the different charges for 
+different unit given in the below table Mr. Akash Bhadra wants to pay the 
+electricity bill, help him to find how much payment he has to pay, and 
+after payment the details should be maintain in BillData.
+[Must use concept of Switch case] 
+Criteria which are to be considered while calculation of bill: 
+UNIT CHARGES
+0-100 200 fixed.
+ 100-200 200+ Extra unit*3.
+ 200-300 200+Extra unit*4.
+ 300-400 200+Extra unit*5.
+Consider Table: 
+Customer (Cust_id,Cust_Name,Unit_Consumed,Total_Bill_Amt) 
+BillData(bid,cust_id,TotalBillAmt,DateofPayment) 
+[Note: Direct insertion in BillData is not allowed, Use Procedure for 
+calculation]
+
+create table cust
+(
+cid int not null primary key ,
+cname char(50) ,
+cunit float(10,2) ,
+totalbill float(10,2) 
+);
+
+create table billdata
+(
+bid int not null primary key ,
+cid int not null references cust(cid),
+bill float(10,2) ,
+pdate date
+);
+
+create procedure datac(in id int , name char(50) , unit int , tbill float(10,2))
+begin
+	insert into cust values (id,name,unit,tbill);
+end;
+
+call datac (1,'akash',207,null) //
+call datac (2,'ram',205,null) //
+call datac (3,'sita',203,null) //
+call datac (4,'shiv',400,null) //
+call datac (5,'radha',500,null) //
+
+
+mysql> select *from cust //
++-----+-------+-------+-----------+
+| cid | cname | cunit | totalbill |
++-----+-------+-------+-----------+
+|   1 | akash |   207 |      NULL |
+|   2 | ram   |   205 |      NULL |
+|   3 | sita  |   203 |      NULL |
+|   4 | shiv  |   400 |      NULL |
+|   5 | radha |   500 |      NULL |
++-----+-------+-------+-----------+
+
+
+
+create function c_bill(unit float)
+returns float(10,2) deterministic
+begin
+	declare tbill float(10,2);
+case unit
+	when (unit between 0 and 100) then
+	set tbill=200;
+	when (unit between 100 and 200) then
+	set tbill=200+(unit-100)*3;
+	when (unit between 200 and 300) then
+	set tbill=200+(unit-100)*4;
+	when (unit between 300 and 400) then
+	set tbill=200+(-100+unit)*5;
+	else
+	set tbill=200+(-100+unit)*6;
+	end case;
+	return tbill;
+end;
+drop procedure calculate //
+create procedure calculate(id int , b_id int)
+begin
+	declare tbill float(10,2);
+	select totalbill into tbill from cust where cid-=id;
+	set tbill=select c_bill(cunit);
+	update cust set totalbill=tbill where cid=id;
+	insert into billdata values(b_id,id,tbill,'2016-01-27');
+	update billdata set bill=tbill where bid=b_id;
+end;
+
+
+call calculate //
++---------------+-------+-
+| c_bill(cunit) | cname |
++---------------+-------+
+|       2270.00 | akash |
++---------------+-------+

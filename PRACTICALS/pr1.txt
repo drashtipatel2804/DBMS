@@ -1,0 +1,53 @@
+Write a procedure that will display ‘MY FIRST PROCEDURE’ message.
+
+create procedure f1()
+begin 
+select 'MY FIRST PROCEDURE';
+end;
+
+
+mysql> call f1/
++--------------------+
+| MY FIRST PROCEDURE |
++--------------------+
+| MY FIRST PROCEDURE |
++--------------------+
+• Write a procedure to perform addition, subtraction and multiplication between 
+two numbers. (Without Parameter)
+
+create procedure f2()
+begin
+	declare a,s,m,n1,n2 int;
+	set n1=30;
+	set n2=60;
+	set a=n1+n2;
+	set s=n2-n1;
+	set m=n1*n2;
+	select a as 'addition is' , s as 'substraction is',m as 'multiplication is' ;
+end;
+
+ call f2/
++-------------+-----------------+-------------------+
+| addition is | substraction is | multiplication is |
++-------------+-----------------+-------------------+
+|          90 |              30 |              1800 |
++-------------+-----------------+-------------------+
+• Write a procedure to perform addition, subtraction and multiplication between 
+two numbers. (With Parameter)
+
+create procedure f3(in n1 int , n2 int)
+begin
+	declare a,s,m int;
+	set a=n1+n2;
+	set s=n2-n1;
+	set m=n1*n2;
+	select a as 'addition is' , s as 'substraction is',m as 'multiplication is' ;
+end;
+
+mysql> call f3(100,50)/
++-------------+-----------------+-------------------+
+| addition is | substraction is | multiplication is |
++-------------+-----------------+-------------------+
+|         150 |             -50 |              5000 |
++-------------+-----------------+-------------------+
+1 row in set (0.00 sec)

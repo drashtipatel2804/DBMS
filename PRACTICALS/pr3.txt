@@ -1,0 +1,334 @@
+//pr3
+
+create table salesman
+(
+sid int not null primary key ,
+sname char(50) ,
+city char(50) ,
+com int 
+);
+
+create procedure s1(in id int , name char(50) , scity char(50) , comm int )
+begin
+	insert into salesman values (id , name , scity , comm );
+end//
+
+call s1(1001 , 'piyush','london',12)//
+
+call s1(1002 , 'niraj','surat',13)//
+
+call s1(1003 , 'miti','london',11)//
+
+call s1(1004 , 'rajesh','baroda',15)//
+
+call s1(1005 , 'anand','new delhi',10)//
+
+call s1(1006 , 'ram','patan',10)//
+
+call s1(1007 , 'laxman','bombay',9)//
+
+> select *from salesman;
++------+--------+-----------+------+
+| sid  | sname  | city      | com  |
++------+--------+-----------+------+
+| 1001 | piyush | london    |   12 |
+| 1002 | niraj  | surat     |   13 |
+| 1003 | miti   | london    |   11 |
+| 1004 | rajesh | baroda    |   15 |
+| 1005 | anand  | new delhi |   10 |
+| 1006 | ram    | patan     |   10 |
+| 1007 | laxman | bombay    |    9 |
++------+--------+-----------+------+
+
+create table customer
+(
+cid int not null primary key ,
+cname char(50) ,
+c_city char (50) ,
+rat int ,
+sid int not null references salesman (sid) 
+);
+
+create procedure c1(in c_id int , name char (50),city char (50) ,rating int, id int )
+begin
+	insert into customer values(c_id ,name ,city ,rating ,id);
+end//
+
+call c1(2001,'hardik','london',100,1001) //
+
+call c1(2002,'gita','rome',200,1003) //
+
+
+call c1(2003,'laxit','surat',200,1002) //
+
+call c1(2004,'govind','bombay',300,1002) //
+
+call c1(2005,'chandu','london',100,1001) //
+call c1(2006,'champak','surat',300,1007) //
+call c1(2007,'pratik','rome',100,1004) //
+
+ select *from customer ;
++------+---------+--------+------+------+
+| cid  | cname   | c_city | rat  | sid  |
++------+---------+--------+------+------+
+| 2001 | hardik  | london |  100 | 1001 |
+| 2002 | gita    | rome   |  200 | 1003 |
+| 2003 | laxit   | surat  |  200 | 1002 |
+| 2004 | govind  | bombay |  300 | 1002 |
+| 2005 | chandu  | london |  100 | 1001 |
+| 2006 | champak | surat  |  300 | 1007 |
+| 2007 | pratik  | rome   |  100 | 1004 |
++------+---------+--------+------+------+
+
+
+create table orders 
+(
+oid int not null primary key ,
+amount float(10,2) ,
+odate date ,
+cid int not null references customer(cid),
+sid int not null references salesman (sid)
+);
+
+create procedure o1(in id int , oamount float(10,2) , o_date date , c_id int , s_id int)
+begin
+	insert into orders  values (id , oamount , o_date , c_id , s_id );
+end//
+
+
+call o1(3001, 18.69, '1999-03-10', 2007, 1007)//
+call o1 (3002 , 767.19, '1999-03-10', 2001, 1001)//
+call o1 (3003, 1900.10, '1999-03-10', 2007, 1004)//
+call o1 (3004, 5160.45, '1999-03-10', 2003, 1002)//
+call o1 (3005, 1098.25, '1999-04-10' , 2008, 1007)//
+call o1 (3006, 1713.12 ,'1999-04-10' , 2002, 1003)//
+call o1(3007 ,75.75, '1999-05-10', 2004 ,1002) //
+call o1 (3008 , 4723.00, '1999-05-10' , 2006, 1001)//
+call o1(3009, 1309.95, '1999-05-10', 2004 1002)//
+call o1(3010, 9898.87 , '1999-06-10', 2006, 1001)//
+
+select *from orders //
++------+---------+------------+------+------+
+| oid  | amount  | odate      | cid  | sid  |
++------+---------+------------+------+------+
+| 3001 |   18.69 | 1999-03-10 | 2007 | 1007 |
+| 3002 |  767.19 | 1999-03-10 | 2001 | 1001 |
+| 3003 | 1900.10 | 1999-03-10 | 2007 | 1004 |
+| 3004 | 5160.45 | 1999-03-10 | 2003 | 1002 |
+| 3005 | 1098.25 | 1999-04-10 | 2008 | 1007 |
+| 3006 | 1713.12 | 1999-04-10 | 2002 | 1003 |
+| 3007 |   75.75 | 1999-05-10 | 2004 | 1002 |
+| 3008 | 4723.00 | 1999-05-10 | 2006 | 1001 |
+| 3010 | 9898.87 | 1999-06-10 | 2006 | 1001 |
++------+---------+------------+------+------+
+
+----->  WRITE A PROCEDURE P_LARGE_NUM THAT PRINTS THE LARGEST NUMBER OF 
+GIVEN THREE NUMBER (N1=10,N2=20,N3=30) (USE SIMPLE IF THEN ELSE)
+
+create procedure p_large_num ()
+begin
+	declare n1 int default 10;
+	declare n2 int default 20;
+	declare n3 int default 30;
+	if ((n1>n2) && (n1>n3)) then
+		select n1;
+	elseif ((n2>n1) && (n2>n3)) then
+		select n2;
+	else 
+		select n3;
+	end if;
+end //
+
+> call p_large_num  //
++------+
+| n3   |
++------+
+|   30 |
++------+
+
+WRITE A PROCEDURE THAT WILL TAKE NUMBER AS PARAMETER AND CHECK 
+WHETHER THE NUMBER IS ODD OR EVEN
+
+create procedure num(in n1 int )
+begin
+	if (n1%2=0) then
+	select n1 as 'The number is even ';
+	else
+	select n1 as 'The number is odd ';
+	end if;
+end//
+
+
+
+
+call num (4) //
++---------------------+
+| The number is even  |
++---------------------+
+|                   4 |
++---------------------+
+create procedure nis(in n1 int )
+begin
+	if (n1%2=0) then
+	select 'The number is even';
+	else
+	select 'The number is odd ';
+	end if;
+end//
+
+
+call num(5) //
++--------------------+
+| The number is odd  |
++--------------------+
+| The number is odd  |
++--------------------+
+
+WRITE A PROCEDURE P_CNUM THAT PRINTS THE NAME AND CUSTOMER NUMBER 
+OF CUSTOMER HAVING CNUM = 2001.
+
+create procedure p_cid()
+begin
+	select cname , cid from customer where cid=2001 ;
+end;
+
+> call p_cid //
++--------+------+
+| cname  | cid  |
++--------+------+
+| hardik | 2001 |
++--------+------+
+
+ WRITE A PROCEDURE P_INCREMENT THAT INCREASE THE RATING OF CUSTOMER 
+NO 2001 BY 150. DISPLAY THE NAME AND INCREASED RATING OF THAT 
+CUSTOMER.
+
+create procedure p_increment()
+begin
+	declare r int;
+	select rat into r from customer where cid=2001 ;
+	set r=r+150;
+	update customer set rat=r where cid=2001; 
+	select cname,rat from customer where cid=2001;
+	
+end ;
+
+ call p_increment //
++--------+------+
+| cname  | rat  |
++--------+------+
+| hardik |  250 |
++--------+------+
+
+WRITE A PROCEDURE P_ORDER THAT PRINTS THE CUSTOMER NUMBER AND 
+ORDER AMOUNT OF THE CUSTOMER HAVING LARGEST ORDER AMOUNT
+
+create procedure p_order()
+begin
+	select cid , amount from orders where amount = (select max(amount) from orders );
+end;
+
+call p_order //
++------+---------+
+| cid  | amount  |
++------+---------+
+| 2006 | 9898.87 |
++------+---------+
+
+WRITE A PROCEDURE P_CITY THAT WILL DISPLAY THE NAME AND TOTAL RATING 
+OF THE CITY THAT HAS HIGHEST TOTAL RATING
+
+ 
+
+create procedure p_city()
+begin
+select c_city,sum(rat) from customer group by c_city//
+
+end//
+
+ call p_city //
++--------+----------+
+| c_city | sum(rat) |
++--------+----------+
+| london |      350 |
+| rome   |      300 |
+| surat  |      500 |
+| bombay |      300 |
++--------+----------+
+
+create procedure p_city()
+begin
+select sum(rat) , c_city from customer group by c_city order by c_city desc limit 1;
+end//
+
+call p_city //
++----------+--------+
+| sum(rat) | c_city |
++----------+--------+
+|      500 | surat  |
++----------+--------+
+
+ ///////select sum(rat) , c_city from customer group by c_city order by sum(rat) desc limit 1;
+    -> //
++----------+--------+
+| sum(rat) | c_city |
++----------+--------+
+|      500 | surat  |
++----------+--------+////
+
+WRITE A PROCEDURE P_GRADE THAT WILL DISPLAY THE GRADE OF THE CITY WITH 
+HIGHEST TOTAL RATING ACCORDING TO FOLLOWING RULES.
+➢ IF TOTAL RATING OF ALL CUSTOMER OF THAT CITY IS LESS THAN 1000 
+THEN CITY_GRADE WILL BE ‘POOR’.
+➢ IF TOTAL RATING OF ALL CUSTOMER OF THAT CITY IS MORE THAN OR 
+EQUAL TO 1000 AND LESS THAN 2000 THEN CITY_GRADE WILL BE ‘GOOD’.
+➢ IF TOTAL RATING OF ALL CUSTOMER OF THAT CITY IS MORE THAN OR 
+EQUAL TO 2000 AND LESS THAN 3000 THEN CITY_GRADE WILL BE 
+‘EXCELLENT’.
+➢ IF TOTAL RATING OF ALL CUSTOMER OF THAT CITY IS MORE THAN OR 
+EQUAL TO 3000 THEN CITY_GRADE WILL BE ‘OUTSTANDING’
+
+create procedure p_grade(in id int)
+begin 
+select sum(rat) , c_city from customer group by c_city   
+
+
+
+select c_city,rat from customer where rat IN (select max(rat) from customer);
+
+select c_city,sum(rat) from customer group by c_city//
+
+select max(rat) , c_city from customer group by c_city where rat in (select sum(rat) from customer )// 
+
+ select c_city,sum(rat) from customer where rat = max(rat)//
+
+
+create procedure p_grade(in city char(50))
+begin
+	declare r int;
+	select rat into r from customer where c_city=city;
+	if(sum(r)>=300) then 
+		select 'grade is good';
+	elseif(sum(r)>=200) then
+		select 'grade is average';
+	else
+		select 'grade is not godd';
+	end if;
+end; 
+
+create procedure des_1(IN edes char(25))
+    -> BEGIN
+    -> IF(edes='Manager') THEN
+    -> update tbl_employee_master set E_salary=E_salary+1000 where E_designation=edes;
+    -> select E_id, E_fullname, E_designation, E_salary from tbl_employee_master;
+    -> END IF;
+    -> IF(edes='Clerk') THEN
+    -> update tbl_employee_master set E_salary=E_salary+1000 where E_designation=edes;
+    -> select E_id, E_fullname, E_designation, E_salary from tbl_employee_master;
+    -> END IF;
+    -> END$
+
+create procedure p_grade
+		
+
+	

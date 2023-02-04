@@ -1,0 +1,97 @@
+create table student
+(
+sid int not null primary key,
+sname char(20),
+marks1 int,
+marks2 int,
+marks3 int,
+total int,
+percentage decimal(10,2),
+grade char(10)
+);
+
+create procedure z2(in id int,name char(20),m1 int,m2 int,m3 int,t int,per decimal(10,2),g char(10))
+begin
+insert into student(sid,sname,marks1,marks2,marks3,total,percentage,grade) values (id,name,m1,m2,m3,t,per,g);
+end;
+
+call z2(101,'kush',80,89,80,null,null,null);//
+call z2(102,'sujal',70,79,70,null,null,null);//
+call z2(103,'jainam',60,90,90,null,null,null);//
+call z2(104,'akshil',50,69,70,null,null,null);//
+call z2(105,'darvin',80,69,80,null,null,null);//
+
+create procedure z4(in id int)
+begin
+declare m1,m2,m3,t int;
+declare per float(10,2);
+declare g char(10);
+select marks1 into m1 from student where sid=id;
+select marks2 into m2 from student where sid=id;
+select marks3 into m3 from student where sid=id;
+select marks1 into m1 from student where sid=id;                                                
+select percentage into per from student where sid=id;
+select grade into g from student where sid=id;
+set t=m1+m2+m3;
+set per=t*100/300;
+if(per>70) then
+set g='O+';
+elseif(per>50 && per<70) then
+set g='A+';
+elseif(per>40 && per<50) then
+set g='B+';
+elseif(per<40) then
+set g='F';
+end if;
+update student set marks1=m1,marks2=m2,marks3=m3,total=t,percentage=per,grade=g where sid=id;
+select *from student where sid=id;
+end;
+
+
+USE FUNCTION 
+================================================
+create function remark(id int)
+returns char(30)
+begin
+declare per float(10,2);
+declare r char(30);
+select percentage into per from student where sid=id;
+if(per>70) then
+set r='distriction';
+return r;
+elseif(per>50 && per<70) then
+set r='first class';
+return r;
+elseif(per<40) then
+set r="fail";
+end if;
+return r;
+end;
+ 
+create function f11(score int)
+returns char(30)
+begin
+declare r char(30);
+
+if(score>70) then
+set r='distriction';
+
+
+elseif(score>50 && score<70) then
+set r='first class';
+
+elseif(score<40) then
+set r="fail";
+
+end if;
+return r;
+end;
+
+
+create procedure qy1()
+begin
+select f11(percentage), sname from student ;
+end; // 
+                                            
+call q1                                   
+

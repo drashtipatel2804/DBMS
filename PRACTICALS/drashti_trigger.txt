@@ -1,0 +1,335 @@
+Write a trigger to calculate total_loss_match based on played and win match, whenever any
+record is inserted into cricket table.
+Consider Tables:
+Cricket(cid, TeamName, Captain, played_match, total_win_match, total_loss_match)
+[Note: Total_loss_match value must be null while inserting data in table.]
+
+
+create table cricket
+(
+cid int primary key ,
+team_name varchar(30) ,
+captain varchar(20) ,
+played int ,
+win int ,
+loss int
+);
+
+
+
+drop  trigger loss_match //
+create trigger loss_match before insert on cricket for each row
+begin
+	set new.loss=new.played-new.win;
+end;
+
+insert into cricket values(1,'star', 'virat' , 20,10 , null)//
+insert into cricket values(2,'starbuks', 'dhoni' , 30,30 , null)//
+insert into cricket values(3,'sitare', 'harsh' , 20,5 , null)//
+insert into cricket values(4,'gujarat', 'situ' , 20,0 , null)//
+insert into cricket values(5,'navra', 'viru' , 40,36 , null)//
+
+
+  select *from cricket //
++-----+-----------+---------+--------+------+------+
+| cid | team_name | captain | played | win  | loss |
++-----+-----------+---------+--------+------+------+
+|   1 | star      | virat   |     20 |   10 |   10 |
+|   2 | starbuks  | dhoni   |     30 |   30 |    0 |
+|   3 | sitare    | harsh   |     20 |    5 |   15 |
+|   4 | gujarat   | situ    |     20 |    0 |   20 |
+|   5 | navra     | viru    |     40 |   36 |    4 |
++-----+-----------+---------+--------+------+------+
+
+Write a trigger that calculates total, percentage and grade of that student whenever record
+is inserted into student.[Total,per,grade must be null while inserting data]
+Consider Table:
+Student (id, name, class, m1, m2, m3,total,per,grade)
+
+
+create table student
+(
+id int primary key ,
+name char(20) ,
+class char(5) ,
+m1 int ,
+m2 int ,
+m3 int ,
+total int ,
+per float(10,2) , 
+grade char(4)
+);
+
+
+
+
+drop trigger before_update_per //
+
+create trigger before_update_per BEFORE INSERT on student for each row
+begin
+	
+	set NEW.total=NEW.m1+NEW.m2+NEW.m3;
+	set NEW.per=(NEW.total*100)/300;
+	if(NEW.per>90) then
+	set NEW.grade='a+';
+	elseif(NEW.per>80)then
+	set NEW.grade='a';
+	elseif (NEW.per>70) then
+	set NEW.grade='b+';
+	elseif (NEW.per>60) then
+	set NEW.grade='b';
+	else
+	set NEW.grade='f';
+	end if;
+end;
+	
+insert into student values (1,'d2' , 'a', 85,95,75,null,null,null)//
+insert into student values (2,'diya' , 'a', 35,65,75,null,null,null)//
+insert into student values (3,'riya' , 'a', 95,95,95,null,null,null)//
+insert into student values (4,'tina' , 'a', 25,25,35,null,null,null)//
+insert into student values (5,'sinu' , 'a', 65,55,45,null,null,null)//
+
+> SELECT *FROM STUDENT //
++----+------+-------+------+------+------+-------+-------+-------+
+| id | name | class | m1   | m2   | m3   | total | per   | grade |
++----+------+-------+------+------+------+-------+-------+-------+
+|  1 | d2   | a     |   85 |   95 |   75 |   255 | 85.00 | a     |
+|  2 | diya | a     |   35 |   65 |   75 |   175 | 58.33 | f     |
+|  3 | riya | a     |   95 |   95 |   95 |   285 | 95.00 | a+    |
+|  4 | tina | a     |   25 |   25 |   35 |    85 | 28.33 | f     |
+|  5 | sinu | a     |   65 |   55 |   45 |   165 | 55.00 | f     |
++----+------+-------+------+------+------+-------+-------+-------+
+
+Write a trigger that calculates inst_Amt based on installment and LoanAmount of loan 
+whenever any record is inserted on Loan table.
+Consider Table : 
+Loan(Cid, Lid, LoanAmount, installment, inst_amt, inst_over)
+
+create table loan
+(
+cid int 	primary key ,
+lid int,
+loan_amt int,
+installment int,
+inst_amt int,
+inst_over date
+);
+
+create trigger d4 before insert on loan for each row 
+begin
+	set new.inst_amt=new.loan_amt/new.installment;
+end;
+
+insert into loan values (1,1,50000,200000,null,'2022-02-02')//
+insert into loan values (2,1,500000,1500000,null,'2022-02-02')//
+insert into loan values (3,1,5000000,80000,null,'2022-02-02')//
+
+ select *from loan //
++-----+------+----------+-------------+----------+------------+
+| cid | lid  | loan_amt | installment | inst_amt | inst_over  |
++-----+------+----------+-------------+----------+------------+
+|   1 |    1 |    50000 |      200000 |        0 | 2022-02-02 |
+|   2 |    1 |   500000 |     1500000 |        0 | 2022-02-02 |
+|   3 |    1 |  5000000 |       80000 |       63 | 2022-02-02 |
++-----+------+----------+-------------+----------+------------+
+
+Create trigger to insert record into ExEmployee table whenever any record deleted from 
+employee table.
+Consider Tables: 
+Employee (EmpId,EmpName,City,Salary,Status) 
+ExEmployee (EmpId,EmpName,City)
+
+create table emp
+(
+id int primary key,
+name varchar(20) ,
+city varchar(30),
+salary int ,
+status int
+);
+
+insert into emp values(1,'ram','surat',20000,1);
+insert into emp values(2,'radha','navsari',20000,2);
+insert into emp values(3,'ritiak' ,'rajkot',2000,1);
+insert into emp values(4,'harsh','surat',20000,1);
+insert into emp values(5,'drashti','surat',20000,1);
+
+create table xemp
+(
+eid int primary key,
+ename varchar(20) ,
+ecity varchar(30)
+);
+
+create trigger pr_3 after delete on emp for each row
+begin
+	insert into xemp values (old.id , old.name, old.city);
+end;
+
+delete  from emp where id=1 //
+Query OK, 1 row affected (0.04 sec)
+
+mysql> select *from xemp //
++-----+-------+-------+
+| eid | ename | ecity |
++-----+-------+-------+
+|   1 | ram   | surat |
++-----+-------+-------+
+
+
+Consider table : 
+Prod_master(pId, pname, quantity, cost_price, sale_price, profit, loss)
+Audit_log(pid, pname, cdate,action)
+[Note: while inserting values in Prod_Master, Profit and Loss value must be 
+null.Date=>current date, action =>delete, update]
+
+Write a trigger that insert record into audit_log table whenever any changes in prod_master.
+
+
+create table prod
+(
+pid int primary key ,
+pname varchar(20) ,
+quen int,
+cprice float(10,2),
+sprice float(10,2),
+profit float(10,2),
+loss float (10,2)
+);
+
+create table audit_log
+(
+pid int primary key,
+pname varchar(20),
+cdate date,
+action varchar(10)
+);
+
+
+
+Write a trigger to calculate and insert profit or loss whenever new record is inserted into 
+prod_master.
+
+drop trigger d1//
+create trigger d1 before insert on prod for each row
+begin
+	if(new.cprice>new.sprice) then
+		set new.loss=new.cprice-new.sprice; 
+		set new.profit=0;
+	else
+		set new.profit=new.sprice-new.cprice ;
+		set new.loss=0;
+	end if;
+end//
+
+
+insert into prod values(1,'pen',20,50,70,null,null)//
+insert into prod values(2,'pencil',50,20,10,null,null)//
+
+ select *from prod //
++-----+--------+------+--------+--------+--------+-------+
+| pid | pname  | quen | cprice | sprice | profit | loss  |
++-----+--------+------+--------+--------+--------+-------+
+|   1 | pen    |   20 |  50.00 |  70.00 |  20.00 |  0.00 |
+|   2 | pencil |   50 |  20.00 |  10.00 |   0.00 | 10.00 |
++-----+--------+------+--------+--------+--------+-------+
+
+Write a trigger that insert record into audit_log table whenever any record deleted from 
+prod_master.
+
+create trigger d2 after delete on prod for each row
+begin
+	insert into audit_log values(old.pid,old.pname,now(),'delete');
+end;
+
+ delete from prod where pid=1 //
+Query OK, 1 row affected (0.04 sec)
+
+mysql> select *from audit_log //
++-----+-------+------------+--------+
+| pid | pname | cdate      | action |
++-----+-------+------------+--------+
+|   1 | pen   | 2022-05-09 | delete |
++-----+-------+------------+--------+
+
+
+Write a trigger that insert record into audit_log table whenever any changes in prod_master.
+
+create trigger d3 after update on prod for each row
+begin
+	insert into audit_log values(new.pid,new.pname,now(),'update');
+end//
+
+update prod set pname='bbb' where pid=2 //
+Query OK, 1 row affected (0.04 sec)
+Rows matched: 1  Changed: 1  Warnings: 0
+
+mysql> select *from prod //
++-----+-------+------+--------+--------+--------+-------+
+| pid | pname | quen | cprice | sprice | profit | loss  |
++-----+-------+------+--------+--------+--------+-------+
+|   2 | bbb   |   50 |  20.00 |  10.00 |   0.00 | 10.00 |
++-----+-------+------+--------+--------+--------+-------+
+1 row in set (0.00 sec)
+
+mysql> select *from audit_log //
++-----+-------+------------+--------+
+| pid | pname | cdate      | action |
++-----+-------+------------+--------+
+|   1 | pen   | 2022-05-09 | delete |
+|   2 | bbb   | 2022-05-09 | update |
++-----+-------+------------+--------+
+
+Government has issue a new rules to calculate net salary of each employee. Employee net 
+salary is calculated based on the basic salary of the employee where allowances and 
+deduction calculated using following information.
+HRA = 7.5% of salary, 
+DA = 67% of salary, 
+MA = 1.5% of salary 
+Gross = Salary + HRA + DA + MA 
+PF is 8.33% of salary 
+Net salary = gross – pf - tax 
+Tax is calculated based on following criteria
+
+create table semp
+(
+eid int primary key,
+salary int,
+hra float(10,2),
+da float(10,2),
+ma float(10,2),
+gross float(10,2),
+pf float(10,2),
+tax float(10,2),
+net float(10,2)
+);
+
+create trigger d5 before insert on semp for each row
+begin
+	set new.hra=(new.salary*7.5)/100;
+	set new.da=(new.salary*67)/100;
+	set new.ma=(new.salary*1.5)/100;	
+	set new.gross=new.salary+new.hra+new.da+new.ma;
+	set new.pf=(new.salary*8.33)/100;
+	if (new.gross<=100000) then
+		set new.tax=0;
+	elseif(new.gross between 100000 and 150000) then
+		set new.tax=(new.gross*7.5/100);
+	elseif(new.gross between 151000 and 200000) then
+		set new.tax=(new.gross*10/100);
+	else
+		set new.tax=(new.gross*15/100);
+	end if;
+	set new.net=new.gross-new.pf-new.tax;
+end;
+
+insert into semp values(1,500000,null,null,null,null,null,null,null)//
+	
+
+ select *from semp //
++-----+--------+----------+-----------+---------+-----------+----------+-----------+-----------+
+| eid | salary | hra      | da        | ma      | gross     | pf       | tax       | net       |
++-----+--------+----------+-----------+---------+-----------+----------+-----------+-----------+
+|   1 | 500000 | 37500.00 | 335000.00 | 7500.00 | 880000.00 | 41650.00 | 132000.00 | 706350.00 |
++-----+--------+----------+-----------+---------+-----------+----------+-----------+-----------+
+

@@ -1,0 +1,230 @@
+Xiaomi is a privately owned Chinese electronics company. Xiaomi designs, 
+develops, and sells smartphones, laptops, and related accessories. Whenever 
+customer wants to order product apply following condition and generate the final 
+amount.
+ Provide a 5% cash back to all the credit card user.
+ Deal of the day, Use coupon “GETMI11” to get RS. 200 OFF.
+ 2% Tax is applied to each product after discount.
+Create Table: XiaomiMaster have a fields like Product id, Customer Name, 
+Product Type, Product Name, Price, Quantity, Payment Mode, Coupon Code, and 
+Net Amount. 
+Note:
+ Payment Mode includes Debit, Credit and Net Banking.
+ Product Type includes smartphones, laptops, and accessories.
+Write a trigger to implement above functionality where net amount is calculated
+automatically.
+
+
+create table xmst
+(
+pid int primary key,
+cname varchar(50),
+ptype enum ('smartphone','laptops','accesoris'),
+pname varchar(50),
+price float(10,2),
+qua int,
+paymode enum ('debit card','credit','netbnking'),
+coupon varchar(10),
+netamt float(10,2)
+);
+drop trigger t1//
+create trigger t1 before insert on xmst for each row
+begin
+	if (new.paymode='credit') then
+		set new.price=new.price-((new.price*5)/100)+((new.price*2)/100);
+	elseif (new.coupon='GETMI11') then
+		set new.price=new.price-200+((new.price*2)/100);
+	else
+		set new.price=new.price;
+	end if;
+	set new.netamt=new.price*new.qua;
+end;
+
+insert into xmst values (1,'drashti','laptops','hp',165000,2,'credit','GETM11',null)//
+insert into xmst values (2,'drash','laptops','hp',200000,2,'debit card','GETM11',null)//
+insert into xmst values (3,'d2','laptops','hp',300000,2,'credit','GETMI11',null)//
+
+select *from xmst //
++-----+---------+---------+-------+-----------+------+------------+---------+-----------+
+| pid | cname   | ptype   | pname | price     | qua  | paymode    | coupon  | netamt    |
++-----+---------+---------+-------+-----------+------+------------+---------+-----------+
+|   1 | drashti | laptops | hp    | 160050.00 |    2 | credit     | GETM11  | 320100.00 |
+|   2 | drash   | laptops | hp    | 200000.00 |    2 | debit card | GETM11  | 400000.00 |
+|   3 | d2      | laptops | hp    | 291000.00 |    2 | credit     | GETMI11 | 582000.00 |
++-----+---------+---------+-------+-----------+------+------------+---------+-----------+
+
+Id, Name, Salary, Department, Designation, No_of_Experience)
+Output should be:
+Salary less than 10000 = 13
+Salary between 10000-20000 = 5
+Salary between 20000-30000 = 12
+Salary greater than 30000 = 24
+
+create table temp 
+(
+id int primary key,
+name varchar(30),
+salary int,
+dep varchar(20),
+desig varchar(20),
+exp int
+);
+
+create procedure data1 (in eid int , ename varchar(30) , esalary int , edep varchar(20),edesig varchar(20),eexp int)
+begin
+	insert into temp values(eid,ename,esalary,edep,edesig,eexp);
+end;
+
+call data1(1,'ram',9000,'it','ceo',10)//
+call data1(2,'raman',8000,'it','ceo',10)//
+call data1(3,'r1',15000,'it','ceo',10)//
+call data1(4,'ram2',16000,'bca','ceo',10)//
+call data1(5,'ram3',26000,'it','ceo',10)//
+call data1(6,'ram4',29000,'cgpit','ceo',10)//
+call data1(7,'ram5',90000,'bmiit','ceo',10)//
+call data1(8,'ram6',70000,'bmiit','ceo',10)//
+
+> select *from temp //
++----+-------+--------+-------+-------+------+
+| id | name  | salary | dep   | desig | exp  |
++----+-------+--------+-------+-------+------+
+|  1 | ram   |   9000 | it    | ceo   |   10 |
+|  2 | raman |   8000 | it    | ceo   |   10 |
+|  3 | r1    |  15000 | it    | ceo   |   10 |
+|  4 | ram2  |  16000 | bca   | ceo   |   10 |
+|  5 | ram3  |  26000 | it    | ceo   |   10 |
+|  6 | ram4  |  29000 | cgpit | ceo   |   10 |
+|  7 | ram5  |  90000 | bmiit | ceo   |   10 |
+|  8 | ram6  |  70000 | bmiit | ceo   |   10 |
++----+-------+--------+-------+-------+------+
+drop procedure p2//
+create procedure p2( d varchar(20))
+begin
+	declare a,b,c,d int;
+	declare cur cursor for select count(*) from temp where salary < 10000 and dep=d ;
+	declare cur1 cursor for select count(*) from temp where salary between 10000 and 20000 and dep=d  ;
+	declare cur2 cursor for select count(*) from temp where salary between 20000 and 30000 and dep=d ;
+	declare cur3 cursor for select count(*) from temp where salary > 30000 and dep=d;
+	open cur;
+		fetch from cur into a;
+		select a;
+	close cur;
+	open cur1;
+		fetch from cur1 into b;
+		select b;
+	close cur1;
+	open cur2;
+		fetch from cur2 into c;
+		select c;
+	close cur2;
+	open cur3;
+		fetch from cur3 into d;
+		select d;
+	close cur3;
+end;
+
+drop procedure sp_01;
+create procedure sp_01(d varchar(30))
+BEGIN
+	declare x,y,z,w int;
+	declare cur CURSOR for select count(*) from temp where salary<10000 and dep=d;
+	declare cur1 CURSOR for select count(*) from temp where salary between 10000 and 20000 and dep=d;
+	declare cur2 CURSOR for select count(*) from temp where salary between 20000 and 30000 and dep=d;
+	declare cur3 CURSOR for select count(*) from temp where salary>30000 and dep=d;
+	OPEN cur;
+		fetch from cur into x;
+		select x;
+	CLOSE cur;
+	OPEN cur1;
+		fetch from cur1 into y;
+		select y;
+	CLOSE cur1;
+	OPEN cur2;
+		fetch from cur2 into z;
+		select z;
+	CLOSE cur2;
+	OPEN cur3;
+		fetch from cur3 into w;
+		select w;
+	CLOSE cur3;
+	
+END
+ call sp_01('it') //
++------+
+| x    |
++------+
+|    2 |
++------+
+1 row in set (0.04 sec)
+
++------+
+| y    |
++------+
+|    1 |
++------+
+1 row in set (0.05 sec)
+
++------+
+| z    |
++------+
+|    1 |
++------+
+1 row in set (0.06 sec)
+
++------+
+| w    |
++------+
+|    0 |
++------+
+
+Chimera 2020 is a technical event of BMIIT where it comprise of four kind 
+of events like blind coding, java coder, LAN gaming, chimera rush. Student 
+can register for any event online, but whenever student registered for the 
+event, it bifurcate automatically and make entry in respective tables. Write 
+a trigger to implements above functionality.
+Consider Tables: 
+Registration(rid, student name, department, contact no, event type, event 
+Name)
+TechnicalEvent( StudentName, eventName)
+NonTechnical(StudentName, eventName )
+Note: EventType : Technical and Non Technical
+
+create table reg 
+(
+rid int primary key,
+sname varchar(20) ,
+dep varchar(20),
+etype enum ('technical' ,  'non tehnical'),
+ename varchar(20)
+);
+
+create table tech
+(sname varchar(20),
+ename varchar(20)
+);
+
+create table nontech
+(sname varchar(20),
+ename varchar(20)
+);
+drop trigger d_1//
+create trigger d_1 before insert on reg for each row
+begin
+	if(new.etype='technical') then
+		insert into tech values(new.sname , new.ename);
+	else
+		insert into nontech values(new.sname , new.ename);
+	end if;
+end;
+
+insert into reg values(1,'ram','it','technical','blind coding')//
+insert into reg values(2,'rnam','it','non tehnical','tresure')//
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,265 @@
+CREATE DATABASE fun ;
+
+Admin of department wants one application in which she can identify student 
+name from student master table by entering enrolment number of student (Search 
+Facility)
+Tbl_student (enrollmentnumber, name, class, division)
+
+
+create table tbl_stud 
+(
+enno bigint not null primary key ,
+sname char(50),
+sclass int ,
+sdiv char(5)
+);
+
+insert into tbl_stud values(202103103410003,'drashti',2,'a');
+insert into tbl_stud values(202103103410004,'khushi',2,'a');
+insert into tbl_stud values(202103103410005,'ashish',2,'a');
+insert into tbl_stud values(202103103410006,'mishti',2,'a');
+insert into tbl_stud values(202103103410007,'shrushti',2,'a');
+
+
+create function fun1(en bigint)
+returns char(50)  DETERMINISTIC
+begin
+	declare s char(50);
+	select sname into s from tbl_stud where enno=en;
+	return s; 
+end;
+
+select fun1(202103103410003) //
++-----------------------+
+| fun1(202103103410003) |
++-----------------------+
+| drashti               |
++-----------------------+
+	
+Consider Table: Recharge_Master(rid, cid, mobile_no, Recharge_amount)
+Write a function which takes mobile_no as an input parameter and returns total 
+recharge paid till the day in that number.
+	
+
+create table recharge_mst
+(
+rid int not null primary key ,
+cid int not null ,
+mobileno bigint ,
+amount int ,
+rdate date
+);
+
+
+create procedure datar(in r_id int , c_id int  , mobile bigint , amt int , r_date date)
+begin
+	insert into recharge_mst values (r_id , c_id , mobile , amt , r_date);
+end;
+
+
+call datar(1,11,9913423569,500,'2000-02-02') // 
+call datar(2,11,9913423569,200,'2000-02-02') // 
+call datar(3,11,9913423569,250,'2000-02-02') // 
+call datar(4,14,9313625496,500,'2000-04-02') // 
+call datar(5,15,9313625496,300,'2000-04-02') // 
+
+
+create function fun2(id int)
+returns int deterministic
+begin
+	declare s int;
+	select sum(amount) into s from recharge_mst where cid=id;
+	return s;
+end;
+
+
+mysql> select fun2(11) //
++----------+
+| fun2(11) |
++----------+
+|      950 |
++----------+
+
+select *from recharge_mst //
++-----+-----+------------+--------+------------+
+| rid | cid | mobileno   | amount | rdate      |
++-----+-----+------------+--------+------------+
+|   1 |  11 | 9913423569 |    500 | 2000-02-02 |
+|   2 |  11 | 9913423569 |    200 | 2000-02-02 |
+|   3 |  11 | 9913423569 |    250 | 2000-02-02 |
+|   4 |  14 | 9313625496 |    500 | 2000-04-02 |
+|   5 |  15 | 9313625496 |    300 | 2000-04-02 |
++-----+-----+------------+--------+------------+
+
+Mr. Patel wants to know number of passed student in particular department of 
+university. Create function f_getstudent() that take coursename as input 
+parameter and returns the total number of passing students in that particular 
+course. 
+Consider following table:
+Student (sid, course, passingpercent,percentscored,result)
+
+
+create table stud
+(
+	sid int not null primary key ,
+	course varchar(20),	
+	perc float ,
+	grade varchar(20)
+);
+
+insert into stud values(1 , 'IT' , 80 , 'D');//
+insert into stud values(2 , 'BBA' , 20 , 'F');//
+insert into stud values(3 , 'BBA' , 30 , 'F');//
+insert into stud values(4 , 'IT' , 69 , 'FC');//
+insert into stud values(5 , 'IT' , 89 , 'D');//
+
+
+create function fun3(c varchar(20))
+returns int deterministic
+begin	
+	declare s int;
+	select count(sid) into s from stud where course=c and grade!='F';
+	return s;
+end;
+
+select fun3('IT') //
++------------+
+| fun3('IT') |
++------------+
+|          3 |
++------------+
+
+SIS provides the functionality to mark attendance on daily basis for each lecture 
+hours. Head of the department wants to check absent percentage of particular 
+student. Write a function which takes enrollment number as a parameter and 
+show absent percentage to HOD.
+Consider Table: 
+Attendance( EnrollmentNo, subjectName, Status, ADate)
+Where status is Present/Absent
+
+
+create table attend
+( 
+	enno int not null  ,
+	sub varchar(10),
+	status char(5),
+	adate date
+);
+
+insert into attend values(1,'maths' , 'A' , '2022-02-02') //
+insert into attend values(1,'oop' , 'P' , '2022-02-03') //
+insert into attend values(1,'de' , 'A' , '2022-02-04') //
+insert into attend values(1,'maths' , 'P' , '2022-02-05') //
+insert into attend values(1,'es' , 'A' , '2022-02-06') //
+
+ select *from attend //
++------+-------+--------+------------+
+| enno | sub   | status | adate      |
++------+-------+--------+------------+
+|    1 | maths | A      | 2022-02-02 |
+|    1 | oop   | P      | 2022-02-03 |
+|    1 | de    | A      | 2022-02-04 |
+|    1 | maths | P      | 2022-02-05 |
+|    1 | es    | A      | 2022-02-06 |
++------+-------+--------+------------+
+drop function fun4//
+create function fun4(en int)
+returns float(10,2) deterministic
+begin	
+	declare s int;
+	declare p float(10,2);
+	select count(enno) into s from attend where enno=en and status='A';
+	set p=(s*100)/5;
+	return p;
+end;
+
+ select fun4(1) //
++---------+
+| fun4(1) |
++---------+
+|   60.00 |
++---------+
+
+UKA TARSADIA UNIVERSITY has total 500 staff in various departments. CEO of 
+UTU wants to fetch total numbers of staff under particular department. Help CEO 
+to find the same using function. Function should takes department name as 
+parameter.
+Consider table:
+Department(dno,dname,spcialist)
+Faculty(FId,Fname,Qualification,dno)
+
+create table dep 
+(
+	did int not null primary key ,
+	dname char(10) ,
+	specialist char(20)
+);
+	
+create table facl
+(
+fid int not null primary key ,
+fname char(50) ,
+quali char(20),
+did int not null references dep(did)
+);
+
+insert into dep values (1,'IT', 'OOP');
+insert into dep values (2,'BCA', 'RDBMS');
+insert into dep values (3,'MATHEMATIC', 'MATHS');
+insert into dep values (4,'SOFT SILL', 'ES');
+insert into dep values (5,'BMIIT', 'DE');
+
+select *from dep //
++-----+------------+------------+
+| did | dname      | specialist |
++-----+------------+------------+
+|   1 | IT         | OOP        |
+|   2 | BCA        | RDBMS      |
+|   3 | MATHEMATIC | MATHS      |
+|   4 | SOFT SILL  | ES         |
+|   5 | BMIIT      | DE         |
++-----+------------+------------+
+
+insert into facl values (11,'BHUMIKA','OOP',1) //
+insert into facl values (12,'RAKESH','OOP',1) //
+insert into facl values (13,'KAJAL','RDBMS',2) //
+insert into facl values (14,'MANISH','RDBMS',2) //
+insert into facl values (15,'NANDINI','OOP',1) //
+
+ SELECT *FROM facl //
++-----+---------+-------+-----+
+| fid | fname   | quali | did |
++-----+---------+-------+-----+
+|  11 | BHUMIKA | OOP   |   1 |
+|  12 | RAKESH  | OOP   |   1 |
+|  13 | KAJAL   | RDBMS |   2 |
+|  14 | MANISH  | RDBMS |   2 |
+|  15 | NANDINI | OOP   |   1 |
++-----+---------+-------+-----+
+
+create function fun5(name char(10))
+returns int deterministic
+begin
+	declare c int;
+	select count(quali) into c from facl where did in (select did from dep where dname=name);
+	return c; 
+end;
+
+ select fun5('IT')//
++------------+
+| fun5('IT') |
++------------+
+|          3 |
++------------+
+1 row in set (0.04 sec)
+
+mysql> select fun5('BCA')//
++-------------+
+| fun5('BCA') |
++-------------+
+|           2 |
++-------------+
+
+
+
+

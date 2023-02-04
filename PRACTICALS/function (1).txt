@@ -1,0 +1,193 @@
+write a function that will first name and last name as input and concat thst 2 string
+write a function that will you if remark based on critaria 
+if per > 70 distinction
+b/w 60-50 first class
+b/w 40-50  sc
+otherwise fail
+
+
+create function f1()
+returns char(10)
+begin
+	return 'hello';
+end;
+
+ select f1() //
++-------+
+| f1()  |
++-------+
+| hello |
++-------+
+
+create function f2(email varchar(50))
+returns varchar(50)
+begin
+	return upper(email);
+end;
+
+ select f2('patoliyadrashti@gmail.com')//
++---------------------------------+
+| f2('patoliyadrashti@gmail.com') |
++---------------------------------+
+| PATOLIYADRASHTI@GMAIL.COM       |
++---------------------------------+
+1 row in set (0.00 sec)
+
+
+create function f3(name varchar(20) , sname varchar(20))
+returns varchar(20)
+begin
+	return concat(name,sname);
+end;
+
+ select f3('dituu' , 'patel') //
++-----------------------+
+| f3('dituu' , 'patel') |
++-----------------------+
+| dituupatel            |
++-----------------------+
+
+
+create function f4(name varchar(20) , sname varchar(20))
+returns int
+begin
+	return length(concat(name,sname));
+end;
+
+ select  f4('ditti' , 'patel') //
++-----------------------+
+| f4('ditti' , 'patel') |
++-----------------------+
+|                    10 |
++-----------------------+
+
+
+create table stud
+(
+sid int not null primary key ,
+sname varchar(50) ,
+s1 int ,
+s2 int ,
+s3 int ,
+total int ,
+per float(10,2) ,
+grade char(10) 
+);
+
+create procedure data(in id int , name varchar(50) , m1 int , m2 int , m3 int , t int , p float(10,2) ,grade char(10) )
+begin
+	insert into stud values(id,name,m1,m2,m3,t,p,grade) ;
+end;
+
+call data(1,'situ', 23,25,24,null,null,'null')//
+call data(2,'mitu', 22,25,04,null,null,'null')//
+call data(3,'ditu', 03,15,19,null,null,'null')//
+call data(4,'fitu', 15,18,10,null,null,'null')//
+call data(5,'kitu', 16,15,24,null,null,'null')//
+
+create procedure grade(in id int)
+begin
+	declare t , m1,m2,m3  int ;
+	declare p float(10,2) ;
+	declare g char(10);
+	select total into t from stud where sid=id;
+	select per into p from stud where sid=id;
+	select grade into g from stud where sid=id;
+	select s1 into m1 from stud where sid=id;
+	select s2 into m2 from stud where sid=id;
+	select s3 into m3  from stud where sid=id;
+	set t=m1+m2+m3 ;
+	set p=(t*100)/90;
+	if (p >= 70 ) then 
+		set g='a+';
+	elseif ((p >= 60) && (p<70)) then
+		set g='a';
+	elseif((p>=50) && (p<60)) then
+		set g='b+';
+	else
+		set g='c';
+	end if;
+	update stud set total=t where sid=id;
+	update stud set per=p where sid=id;
+	update stud set grade=g where sid=id;
+end;
+
+ select *from stud //
++-----+-------+------+------+------+-------+-------+-------+
+| sid | sname | s1   | s2   | s3   | total | per   | grade |
++-----+-------+------+------+------+-------+-------+-------+
+|   1 | situ  |   23 |   25 |   24 |    72 | 80.00 | a+    |
+|   2 | mitu  |   22 |   25 |    4 |    51 | 56.67 | b+    |
+|   3 | ditu  |    3 |   15 |   19 |    37 | 41.11 | c     |
+|   4 | fitu  |   15 |   18 |   10 |    43 | 47.78 | c     |
+|   5 | kitu  |   16 |   15 |   24 |    55 | 61.11 | a     |
++-----+-------+------+------+------+-------+-------+-------+
+
+create function remark1(id int)
+returns varchar(30)
+begin
+	declare r varchar(30);
+	declare p float(10,2);
+	select per into p from stud where sid=id;
+	select remark  into r from stud where sid=id;
+	if(p>=70) then
+	set r='distinction';
+	update stud set remark=r where sid=id;
+	return r;
+	elseif(p>=60) then
+	set r='first class';
+	update stud set remark=r where sid=id;
+	return r;
+	elseif(p>=50) then
+	set r='second class';
+	update stud set remark=r where sid=id;
+	return r;
+	else
+	set r='fail';
+	update stud set remark=r where sid=id;
+	return r;
+	end if;
+end;
+
+select  remark(1) //
++-------------+
+| remark(1)   |
++-------------+
+| distinction |
++-------------+
+1 row in set (0.01 sec)
+
+mysql> select  remark(2) //
++--------------+
+| remark(2)    |
++--------------+
+| second class |
++--------------+
+1 row in set (0.01 sec)
+
+mysql> select  remark(3) //
++-----------+
+| remark(3) |
++-----------+
+| fail      |
++-----------+
+1 row in set (0.00 sec)
+
+alter table stud
+add column remark varchar(50) ;
+
+select *from stud //
++-----+-------+------+------+------+-------+-------+-------+--------------+
+| sid | sname | s1   | s2   | s3   | total | per   | grade | remark       |
++-----+-------+------+------+------+-------+-------+-------+--------------+
+|   1 | situ  |   23 |   25 |   24 |    72 | 80.00 | a+    | distinction  |
+|   2 | mitu  |   22 |   25 |    4 |    51 | 56.67 | b+    | second class |
+|   3 | ditu  |    3 |   15 |   19 |    37 | 41.11 | c     | fail         |
+|   4 | fitu  |   15 |   18 |   10 |    43 | 47.78 | c     | NULL         |
+|   5 | kitu  |   16 |   15 |   24 |    55 | 61.11 | a     | NULL         |
++-----+-------+------+------+------+-------+-------+-------+--------------+
+5 rows in set (0.00 sec)
+
+
+
+

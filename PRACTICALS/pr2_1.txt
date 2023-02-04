@@ -1,0 +1,70 @@
+ 
+Student master(Sid,Sname,Class,Sem, gender, city)
+Leave master( Lid, LeaveType, Stud_id, Reason, Status
+
+create table stud_mst
+(
+sid int not null primary key ,
+sname char(50) not null ,
+class char(5) ,
+sem char(5) ,
+gender char(5) ,
+city char(50)
+);
+
+
+create procedure data1(in id int , name char(50) , sclass char(5) , s_sem char(5) , s_gender char(5) , s_city char(50))
+begin
+	insert into stud_mst values(id ,name , sclass , s_sem , s_gender , s_city);
+end;
+
+call data1(1,'ram', 'a',1,'m','surat') //
+call data1(2,'kamini', 'a',4,'f','vapi') //
+call data1(3,'jam', 'a',1,'m','navsari') //
+call data1(4,'dam', 'a',2,'m','surat') //
+call data1(5,'nam', 'a',1,'m','surat') //
+
+
+create table leave_mst
+(
+lid int not null primary key ,
+sid int not null references stud_mst(sid) ,
+reason char(100) not null ,
+status char(5)
+);
+
+create procedure data2 (in id int , s_id int , l_reason char(100) , l_status char(5) )
+begin
+	insert into leave_mst values(id , s_id , l_reason , l_status);
+end; 
+
+call data2(1,1,'headache', 'a') //
+call data2(2,2,'fever', 'a') //
+call data2(3,1,'function', 'a') //
+call data2(4,4,'null', 'r') //
+call data2(5,5,'headache', 'a') //
+
+Mitsu shah studying in BMIIT, 2nd semester. Her counselor wants to 
+check total numbers of leave applied by Ram and total number of 
+granted leave of that student. Write a procedure to implement above 
+functionality and display information in a proper format.
+Consider table:
+
+create procedure l_count (in name char(50))
+begin
+	select count(lid) from leave_mst where sid IN (select sid from stud_mst where sname=name);
+end;
+
+
+mysql> call l_count('ram')//
++------------+
+| count(lid) |
++------------+
+|          2 |
++------------+
+
+Counselor of 2nd semester wants to identify number of boys, number of 
+girls under her counseling and number of students coming from “Valsad” 
+city. Write a procedure to implement above functionality and display 
+result in proper format. Consider table of above question: 1
+

@@ -1,0 +1,273 @@
+mysql> show databases;
++--------------------+
+| Database           |
++--------------------+
+| information_schema |
+| m                  |
+| mysql              |
+| p                  |
+| p7                 |
+| performance_schema |
+| pr2_1              |
+| pr_4               |
+| prc                |
+| s1                 |
+| sys                |
+| utu                |
++--------------------+
+12 rows in set (0.01 sec)
+
+mysql> use utu
+Database changed
+mysql> show tables;
++---------------+
+| Tables_in_utu |
++---------------+
+| city          |
+| dep           |
+| emp           |
++---------------+
+3 rows in set (0.07 sec)
+
+mysql> select * from city;
++------+-----------+
+| c_id | cname     |
++------+-----------+
+|    1 | surat     |
+|    2 | vapi      |
+|    3 | valsad    |
+|    4 | navsari   |
+|    5 | baroda    |
+|    6 | mumbai    |
+|    7 | bardoli   |
+|    8 | goa       |
+|    9 | ahemdabad |
+|   10 | pune      |
++------+-----------+
+10 rows in set (0.06 sec)
+
+mysql> create procedure sp_cname() select cname from city;
+Query OK, 0 rows affected (0.07 sec)
+
+mysql> create procedure sp_cname select cname from city;
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'select cname from city' at line 1
+mysql> call sp_cname;
++-----------+
+| cname     |
++-----------+
+| surat     |
+| vapi      |
+| valsad    |
+| navsari   |
+| baroda    |
+| mumbai    |
+| bardoli   |
+| goa       |
+| ahemdabad |
+| pune      |
++-----------+
+10 rows in set (0.04 sec)
+
+Query OK, 0 rows affected (0.05 sec)
+
+mysql> call sp_cname;
++-----------+
+| cname     |
++-----------+
+| surat     |
+| vapi      |
+| valsad    |
+| navsari   |
+| baroda    |
+| mumbai    |
+| bardoli   |
+| goa       |
+| ahemdabad |
+| pune      |
++-----------+
+10 rows in set (0.00 sec)
+
+Query OK, 0 rows affected (0.04 sec)
+
+mysql> show tables;
++---------------+
+| Tables_in_utu |
++---------------+
+| city          |
+| dep           |
+| emp           |
++---------------+
+3 rows in set (0.04 sec)
+
+mysql> select * from dept;
+ERROR 1146 (42S02): Table 'utu.dept' doesn't exist
+mysql> select * from dep;
++------+----------+
+| d_id | d_name   |
++------+----------+
+|   11 | research |
+|   12 | quality  |
+|   13 | sales    |
+|   14 | training |
+|   15 | support  |
+|   16 | human    |
+|   17 | finance  |
++------+----------+
+7 rows in set (0.06 sec)
+
+mysql> show databses;
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'databses' at line 1
+mysql> show databases;
++--------------------+
+| Database           |
++--------------------+
+| information_schema |
+| m                  |
+| mysql              |
+| p                  |
+| p7                 |
+| performance_schema |
+| pr2_1              |
+| pr_4               |
+| prc                |
+| s1                 |
+| sys                |
+| utu                |
++--------------------+
+12 rows in set (0.00 sec)
+
+mysql> use pr4;
+ERROR 1049 (42000): Unknown database 'pr4'
+mysql> use p7;
+Database changed
+mysql> show tables;
++--------------+
+| Tables_in_p7 |
++--------------+
+| product      |
+| supliers     |
++--------------+
+2 rows in set (0.00 sec)
+
+mysql> select * from product;
++--------+--------+-------------+------+
+| p_code | p_name | description | s_id |
++--------+--------+-------------+------+
+|     11 | pen    | long        |    1 |
+|     12 | pencil | lead        |    2 |
+|     13 | watch  | smart       |    3 |
+|     14 | laptop | hp          |    4 |
+|     15 | tv     | smart       |    5 |
++--------+--------+-------------+------+
+5 rows in set (0.01 sec)
+
+mysql> select p_name,description from product
+    -> ;
++--------+-------------+
+| p_name | description |
++--------+-------------+
+| pen    | long        |
+| pencil | lead        |
+| watch  | smart       |
+| laptop | hp          |
+| tv     | smart       |
++--------+-------------+
+5 rows in set (0.00 sec)
+
+mysql> create procedure sp_product() select p_name,description from product;
+Query OK, 0 rows affected (0.04 sec)
+
+mysql> call sp_product;
++--------+-------------+
+| p_name | description |
++--------+-------------+
+| pen    | long        |
+| pencil | lead        |
+| watch  | smart       |
+| laptop | hp          |
+| tv     | smart       |
++--------+-------------+
+5 rows in set (0.00 sec)
+
+Query OK, 0 rows affected (0.01 sec)
+
+mysql> call sp_product;
++--------+-------------+
+| p_name | description |
++--------+-------------+
+| pen    | long        |
+| pencil | lead        |
+| watch  | smart       |
+| laptop | hp          |
+| tv     | smart       |
++--------+-------------+
+5 rows in set (0.00 sec)
+
+Query OK, 0 rows affected (0.02 sec)
+
+mysql> show procedure;
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near '' at line 1
+mysql> show procedures;
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'procedures' at line 1
+mysql> create or replace procedure sp_product()
+    -> select * from product;
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'procedure sp_product()
+select * from product' at line 1
+mysql> delimiter @@
+mysql>
+mysql> create or replace procedure sp_name()
+    -> begin
+    -> select * from product;
+    -> end;
+    -> @@
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'procedure sp_name()
+begin
+select * from product;
+end' at line 1
+mysql> create procedure p1()
+    -> begin
+    -> select * from product;
+    -> end;
+    -> @@
+Query OK, 0 rows affected (0.04 sec)
+
+mysql> call p1();
+    -> @@
++--------+--------+-------------+------+
+| p_code | p_name | description | s_id |
++--------+--------+-------------+------+
+|     11 | pen    | long        |    1 |
+|     12 | pencil | lead        |    2 |
+|     13 | watch  | smart       |    3 |
+|     14 | laptop | hp          |    4 |
+|     15 | tv     | smart       |    5 |
++--------+--------+-------------+------+
+5 rows in set (0.00 sec)
+
+Query OK, 0 rows affected (0.01 sec)
+
+mysql>
+mysql> delimier ;
+    -> @@
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'delimier' at line 1
+mysql> delimiter ;
+mysql> select * from product;
++--------+--------+-------------+------+
+| p_code | p_name | description | s_id |
++--------+--------+-------------+------+
+|     11 | pen    | long        |    1 |
+|     12 | pencil | lead        |    2 |
+|     13 | watch  | smart       |    3 |
+|     14 | laptop | hp          |    4 |
+|     15 | tv     | smart       |    5 |
++--------+--------+-------------+------+
+5 rows in set (0.00 sec)
+
+mysql>
+
+
+
+
+
+
+

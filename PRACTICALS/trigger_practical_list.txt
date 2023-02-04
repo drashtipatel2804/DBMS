@@ -1,0 +1,117 @@
+Write a trigger to calculate total_loss_match based on played and win match, whenever any
+record is inserted into cricket table.
+Consider Tables:
+Cricket(cid, TeamName, Captain, played_match, total_win_match, total_loss_match)
+[Note: Total_loss_match value must be null while inserting data in table.]
+
+
+create table cricket
+(
+cid int primary key ,
+team_name varchar(30) ,
+captain varchar(20) ,
+played int ,
+win int ,
+loss int
+);
+
+insert into cricket values(1,'star', 'virat' , 20,10 , null)//
+insert into cricket values(2,'starbuks', 'dhoni' , 30,30 , null)//
+insert into cricket values(3,'sitare', 'harsh' , 20,5 , null)//
+insert into cricket values(4,'gujarat', 'situ' , 20,0 , null)//
+insert into cricket values(5,'navra', 'viru' , 40,36 , null)//
+
+
+select *from cricket //
++-----+-----------+---------+--------+------+------+
+| cid | team_name | captain | played | win  | loss |
++-----+-----------+---------+--------+------+------+
+|   1 | star      | virat   |     20 |   10 | NULL |
+|   2 | starbuks  | dhoni   |     30 |   30 | NULL |
+|   3 | sitare    | harsh   |     20 |    5 | NULL |
+|   4 | gujarat   | situ    |     20 |    0 | NULL |
+|   5 | navra     | viru    |     40 |   36 | NULL |
++-----+-----------+---------+--------+------+------+
+
+drop  trigger loss_match //
+create trigger loss_match before update on cricket for each row
+begin
+	declare loss  , played, win int;
+	set loss=played-win;
+end;
+    
+update cricket set loss=played-win ;
+
+select *from cricket //
++-----+-----------+---------+--------+------+------+
+| cid | team_name | captain | played | win  | loss |
++-----+-----------+---------+--------+------+------+
+|   1 | star      | virat   |     20 |   10 |   10 |
+|   2 | starbuks  | dhoni   |     30 |   30 |    0 |
+|   3 | sitare    | harsh   |     20 |    5 |   15 |
+|   4 | gujarat   | situ    |     20 |    0 |   20 |
+|   5 | navra     | viru    |     40 |   36 |    4 |
++-----+-----------+---------+--------+------+------+
+
+
+Write a trigger that calculates total, percentage and grade of that student whenever record
+is inserted into student.[Total,per,grade must be null while inserting data]
+Consider Table:
+Student (id, name, class, m1, m2, m3,total,per,grade)
+
+
+create table student
+(
+id int primary key ,
+name char(20) ,
+class char(5) ,
+m1 int ,
+m2 int ,
+m3 int ,
+total int ,
+per float(10,2) , 
+grade char(4)
+);
+
+
+insert into student values (1,'d2' , 'a', 85,95,75,null,null,null)//
+insert into student values (2,'diya' , 'a', 35,65,75,null,null,null)//
+insert into student values (3,'riya' , 'a', 95,95,95,null,null,null)//
+insert into student values (4,'tina' , 'a', 25,25,35,null,null,null)//
+insert into student values (5,'sinu' , 'a', 65,55,45,null,null,null)//
+
+
+select *from student //
++----+------+-------+------+------+------+-------+------+-------+
+| id | name | class | m1   | m2   | m3   | total | per  | grade |
++----+------+-------+------+------+------+-------+------+-------+
+|  1 | d2   | a     |   85 |   95 |   75 |  NULL | NULL | NULL  |
+|  2 | diya | a     |   35 |   65 |   75 |  NULL | NULL | NULL  |
+|  3 | riya | a     |   95 |   95 |   95 |  NULL | NULL | NULL  |
+|  4 | tina | a     |   25 |   25 |   35 |  NULL | NULL | NULL  |
+|  5 | sinu | a     |   65 |   55 |   45 |  NULL | NULL | NULL  |
++----+------+-------+------+------+------+-------+------+-------+
+
+drop trigger before_update_per //
+
+create trigger before_update_per before update on student for each row
+begin
+	declare total,m1,m2,m3 int;
+	declare per float(10,2);
+	declare grade char(4) ;
+	set total=m1+m2+m3;
+	set per=(total*100)/300;
+	if(per>90) then
+	set grade='a+';
+	elseif(per>80)then
+	set grade='a';
+	elseif (per>70) then
+	set grade='b+';
+	elseif (per>60) then
+	set grade='b';
+	else
+	set grade='f';
+	end if;
+end;
+	
+

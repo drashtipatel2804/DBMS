@@ -1,0 +1,156 @@
+create table stud
+(
+sid int not null primary key ,
+sname char(50) ,
+scourse char(20) ,
+sclass int,
+sdiv char(5)
+); //
+
+insert into stud values(1,'ram','it',2,'a') //
+insert into stud values(2,'nam','it',2,'a') //
+insert into stud values(3,'siya','it',2,'a') //
+insert into stud values(4,'radha','it',2,'a') //
+insert into stud values(5,'rani','it',2,'a') //
+insert into stud values(6,'dittu','it',2,'a') //
+
+
+ select *from stud //
++-----+-------+---------+--------+------+
+| sid | sname | scourse | sclass | sdiv |
++-----+-------+---------+--------+------+
+|   1 | ram   | it      |      2 | a    |
+|   2 | nam   | it      |      2 | a    |
+|   3 | siya  | it      |      2 | a    |
+|   4 | radha | it      |      2 | a    |
+|   5 | rani  | it      |      2 | a    |
++-----+-------+---------+--------+------+
+
+
+create table test 
+(
+tid int not null primary key,
+sid int not null references stud(sid),
+subcode int,
+assign int,
+quiz int ,
+unit1 int ,
+unit2 int ,
+internal int 
+);//
+
+insert into test values(11,1,3202,8,5,25,19,55)//
+insert into test values(22,2,3202,7,8,20,15,40)//
+insert into test values(33,3,3202,3,4,12,11,18)//
+insert into test values(44,4,3202,10,6,14,17,32)//
+insert into test values(55,5,3202,5,10,25,19,48)//
+insert into test values(66,6,3202,10,10,28,28,59)//
+
+
+select *from test //
++-----+-----+---------+--------+------+-------+-------+----------+
+| tid | sid | subcode | assign | quiz | unit1 | unit2 | internal |
++-----+-----+---------+--------+------+-------+-------+----------+
+|  11 |   1 |    3202 |      8 |    5 |    25 |    19 |       55 |
+|  22 |   2 |    3202 |      7 |    8 |    20 |    15 |       40 |
+|  33 |   3 |    3202 |      3 |    4 |    12 |    11 |       18 |
+|  44 |   4 |    3202 |     10 |    6 |    14 |    17 |       32 |
+|  55 |   5 |    3202 |      5 |   10 |    25 |    19 |       48 |
++-----+-----+---------+--------+------+-------+-------+----------+
+
+create table finternal
+(
+fid int primary key,
+sid int not null references stud(sid),
+q_4 int,
+u_16 int,
+a_5 int ,
+i_15 int,
+fi_40 int
+) //
+
+insert into finternal values (101,1,null,null,null,null,null , null)//
+insert into finternal values (102,2,null,null,null,null,null)//
+insert into finternal values (103,3,null,null,null,null,null)//
+insert into finternal values (104,4,null,null,null,null,null)//
+insert into finternal values (105,5,null,null,null,null,null)//
+insert into finternal values (106,6,null,null,null,null,null,null)//
+
+
+
+
+mysql> select *from finternal //
++-----+-----+------+------+------+------+-------+
+| fid | sid | q_4  | u_16 | a_5  | i_15 | fi_40 |
++-----+-----+------+------+------+------+-------+
+| 101 |   1 | NULL | NULL | NULL | NULL |  NULL |
+| 102 |   2 | NULL | NULL | NULL | NULL |  NULL |
+| 103 |   3 | NULL | NULL | NULL | NULL |  NULL |
+| 104 |   4 | NULL | NULL | NULL | NULL |  NULL |
+| 105 |   5 | NULL | NULL | NULL | NULL |  NULL |
++-----+-----+------+------+------+------+-------+
+ alter table finternal
+    -> add column per float(10,2) //
+
+create procedure calculate(in id int )
+begin
+	declare a int;
+	declare q int;
+	declare u1 int;
+	declare u2 int;
+	declare i int;
+	declare q4 int;
+	declare u16 int;
+	declare a5 int;
+	declare i15 int;
+	declare fi40 int;
+	declare p float(10,2);
+
+	select assign , quiz , unit1, unit2,internal into a,q,u1,u2,i from test where sid=id;
+	select q_4 , u_16 , a_5 , i_15 , fi_40 , per into q4 ,u16,a5,i15,fi40 , p from finternal where sid=id;
+	set q4=(q*4)/10;
+	set u16=((u1*8)/30) + ((u2*8)/30);
+	set a5=(a*5)/10;
+	set i15=(i*15)/60;
+	set fi40 = q4+u16+a5+i15;
+	set p=(fi40*100)/40;
+	select bonus (fi40 , p) from finternal where sid=id;
+	update finternal set q_4=q4, u_16=u16 , a_5=a5 , i_15=i15 ,  fi_40=fi40 ,per=p where sid=id;
+end;
+
+
+
+
+create function bonus(score int  , percentage float(10,2))
+returns int deterministic
+begin
+	if((score=15) || (percentage <=40)) then
+		set score=score+1;
+	elseif((score=14) || (percentage <=40)) then
+		set score=score+2;
+	elseif((percentage >=90 )&& (score <=38)) then
+		set score=score+2;
+	else
+		set score=score+0;
+	end if;
+	return score;
+end;
+		
+	select *from finternal //
++-----+-----+------+------+------+------+-------+-------+
+| fid | sid | q_4  | u_16 | a_5  | i_15 | fi_40 | per   |
++-----+-----+------+------+------+------+-------+-------+
+| 101 |   1 |    2 |   12 |    4 |   14 |    32 | 80.00 |
+| 102 |   2 |    3 |    9 |    4 |   10 |    26 | 65.00 |
+| 103 |   3 |    2 |    6 |    2 |    5 |    15 | 37.50 |
+| 104 |   4 |    2 |    8 |    5 |    8 |    23 | 57.50 |
+| 105 |   5 |    4 |   12 |    3 |   12 |    31 | 77.50 |
+| 106 |   6 |    4 |   15 |    5 |   15 |    39 | 97.50 |
++-----+-----+------+------+------+------+-------+-------+
+	
+ call calculate(6) //
++------------------+
+| bonus (fi40 , p) |
++------------------+
+|               39 |
++------------------+

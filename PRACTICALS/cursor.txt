@@ -1,0 +1,182 @@
+select *from employee
+    -> ;
++-----+---------+--------+------------+-------------+------------------+
+| eid | name    | salary | dept       | designation | no_of_experience |
++-----+---------+--------+------------+-------------+------------------+
+|   1 | preet   | 500000 | hr         | head        |                6 |
+|   2 | taxil   |  15000 | sales      | manager     |                4 |
+|   3 | naishal |  22000 | production | head        |                2 |
+|   4 | avshit  | 100000 | transport  | manager     |                1 |
+|  50 | john    |  10000 | devlopment | developer   |                7 |
++-----+---------+--------+------------+-------------+------------------+
+
+
+create procedure sample(in id int)
+begin
+	declare ename varchar(20) default " ";
+	declare esalary int;
+	declare emp_cursor CURSOR FOR SELECT name FROM employee where eid=id;
+	
+	open emp_cursor;
+		fetch from emp_cursor into ename;
+		select ename;
+	close emp_cursor;
+end;
+ call sample(1) //
++-------+
+| ename |
++-------+
+| preet |
++-------+
+
+		
+drop procedure sample//
+create procedure sample()
+begin
+	declare id int;
+	declare ename varchar(20) default " ";
+	declare esalary int;
+	declare emp_cursor CURSOR FOR SELECT name , eid , salary FROM employee ;
+	
+	open emp_cursor;
+		fetch from emp_cursor into ename ,id, esalary ;
+		select ename , id , esalary;
+	close emp_cursor;
+end;
+
+
+
+
+
+ call sample //
++-------+------+---------+
+| ename | id   | esalary |
++-------+------+---------+
+| preet |    1 |  500000 |
++-------+------+---------+
+
+
+select *from emp ;
++-----+---------+------+-------+---------------------+---------+
+| eid | ename   | edep | edesi | eeffi               | estatus |
++-----+---------+------+-------+---------------------+---------+
+|   1 | ram     | it   | emp   | high                |       3 |
+|   2 | radha   | it   | emp   | improve             |       5 |
+|   3 | sita    | it   | emp   | train for improving |       8 |
+|   4 | krishna | it   | emp   | train for improving |       7 |
+|   5 | ashish  | it   | emp   | not eligible        |      10 |
++-----+---------+------+-------+---------------------+---------+
+
+drop procedure sample//
+create procedure sample()
+begin
+	declare id int;
+	declare name varchar(20) default " ";
+	declare status int;
+	declare emp_cursor CURSOR FOR SELECT ename , eid , estatus FROM emp ;
+	
+	open emp_cursor;
+	a:LOOP
+		fetch from emp_cursor into name ,id, status ;
+		select name , id , status;
+	end loop a;
+	close emp_cursor;
+end;
+
+drop procedure update_cursor//
+create procedure update_cursor(in id int , name varchar(20))
+begin
+
+	declare c_update cursor for select ename from emp where eid=id;
+	update emp set ename=name where eid=id;
+	open c_update;
+
+		fetch from c_update into name;
+		select name , id;
+		
+
+	close c_update;
+
+end;
+
+
+
+create table stud
+(
+sid int primary key,
+sname varchar(20)
+);
+
+
+create table backup
+(
+id int ,
+name varchar(20)
+);
+
+
+insert into stud values(1,'ram')//
+insert into stud values(2,'rahi')//
+insert into stud values(3,'radha')//
+insert into stud values(4,'rashi')//
+insert into stud values(5,'manuj')//
+insert into stud values(6,'dharam')//
+insert into stud values(7,'harsh')//
+insert into stud values(8,'fenil')//
+insert into stud values(9,'dev')//
+insert into stud values(10,'diyesh')//
+
+select *from stud //
++-----+--------+
+| sid | sname  |
++-----+--------+
+|   1 | ram    |
+|   2 | rahi   |
+|   3 | radha  |
+|   4 | rashi  |
+|   5 | manuj  |
+|   6 | dharam |
+|   7 | harsh  |
+|   8 | fenil  |
+|   9 | dev    |
+|  10 | diyesh |
+
+
+drop procedure task //
+create procedure task(in s_id int)
+begin
+
+	declare name varchar(20);
+	select sname into name from stud where sid=s_id;
+	insert into backup values (s_id,name) ;
+	delete from stud where sid=s_id;
+end;
+
+ select *from stud //
++-----+--------+
+| sid | sname  |
++-----+--------+
+|   6 | dharam |
+|   7 | harsh  |
+|   8 | fenil  |
+|   9 | dev    |
+|  10 | diyesh |
++-----+--------+
+5 rows in set (0.00 sec)
+
+mysql> select *from backup //
++------+-------+
+| id   | name  |
++------+-------+
+|    1 | ram   |
+|    2 | rahi  |
+|    3 | radha |
+|    4 | rashi |
+|    5 | manuj |
++------+-------+
+
+
+
+			
+	
+

@@ -1,0 +1,69 @@
+ select * from tbl_employee_master;
++------+---------------+-----------+----------+------------+---------------+--------------+----------+--------------+----------------+
+| E_id | E_fullname    | E_address | E_gender | E_dob      | E_designation | E_department | E_salary | E_experience | e_joining_date |
++------+---------------+-----------+----------+------------+---------------+--------------+----------+--------------+----------------+
+|    1 | Rohan Shah    | Surat     | Male     | 1990-01-11 | Manager       | Sales        |     9000 | 5            | 1995-02-03     |
+|    2 | Raj Singh     | Surat     | Male     | 1991-02-11 | Clerk         | PR           |     6000 | 3            | 2000-06-22     |
+|    3 | Jay Patel     | Bardoli   | Male     | 1990-03-12 | Assistant     | Sales        |     8000 | 5            | 2000-03-21     |
+|    4 | Ahan Seth     | Surat     | Male     | 1988-02-11 | Intern        | PR           |    12000 | 1            | 2019-02-11     |
+|    5 | Nisarg Rai    | Surat     | Male     | 1991-03-12 | Chief         | Sales        |    35000 | 9            | 2011-01-11     |
+|    6 | Om Patil      | Vadodara  | Male     | 1992-02-11 | Clerk         | PR           |     7000 | 2            | 2018-02-04     |
+|    7 | Karan Brar    | Surat     | Male     | 1990-05-08 | Manager       | Sales        |    19000 | 6            | 2013-01-13     |
+|    8 | Sanjay Mishra | Kim       | Male     | 1988-03-11 | Assistant     | PR           |     5000 | 4            | 2014-02-12     |
+|    9 | Megha Patel   | Surat     | Female   | 1990-04-14 | Chief         | Sales        |     6000 | 2            | 2011-12-11     |
+|   10 | Dhruvi Ahir   | Akoti     | Female   | 1991-03-11 | Manager       | PR           |    11000 | 3            | 2010-11-13     |
++------+---------------+-----------+----------+------------+---------------+--------------+----------+--------------+----------------+
+10 rows in set (0.05 sec)
+
+create procedure des_1(IN edes char(25))
+    -> BEGIN
+    -> IF(edes='Manager') THEN
+    -> update tbl_employee_master set E_salary=E_salary+1000 where E_designation=edes;
+    -> select E_id, E_fullname, E_designation, E_salary from tbl_employee_master;
+    -> END IF;
+    -> IF(edes='Clerk') THEN
+    -> update tbl_employee_master set E_salary=E_salary+1000 where E_designation=edes;
+    -> select E_id, E_fullname, E_designation, E_salary from tbl_employee_master;
+    -> END IF;
+    -> END$
+Query OK, 0 rows affected (0.04 sec)
+
+mysql> call des_1('Manager')
+    -> $
++------+---------------+---------------+----------+
+| E_id | E_fullname    | E_designation | E_salary |
++------+---------------+---------------+----------+
+|    1 | Rohan Shah    | Manager       |    10000 |
+|    2 | Raj Singh     | Clerk         |     6000 |
+|    3 | Jay Patel     | Assistant     |     8000 |
+|    4 | Ahan Seth     | Intern        |    12000 |
+|    5 | Nisarg Rai    | Chief         |    35000 |
+|    6 | Om Patil      | Clerk         |     7000 |
+|    7 | Karan Brar    | Manager       |    20000 |
+|    8 | Sanjay Mishra | Assistant     |     5000 |
+|    9 | Megha Patel   | Chief         |     6000 |
+|   10 | Dhruvi Ahir   | Manager       |    12000 |
++------+---------------+---------------+----------+
+10 rows in set (0.04 sec)
+
+Query OK, 0 rows affected (0.06 sec)
+
+mysql> call des_1('Clerk')
+    -> $
++------+---------------+---------------+----------+
+| E_id | E_fullname    | E_designation | E_salary |
++------+---------------+---------------+----------+
+|    1 | Rohan Shah    | Manager       |    10000 |
+|    2 | Raj Singh     | Clerk         |     7000 |
+|    3 | Jay Patel     | Assistant     |     8000 |
+|    4 | Ahan Seth     | Intern        |    12000 |
+|    5 | Nisarg Rai    | Chief         |    35000 |
+|    6 | Om Patil      | Clerk         |     8000 |
+|    7 | Karan Brar    | Manager       |    20000 |
+|    8 | Sanjay Mishra | Assistant     |     5000 |
+|    9 | Megha Patel   | Chief         |     6000 |
+|   10 | Dhruvi Ahir   | Manager       |    12000 |
++------+---------------+---------------+----------+
+10 rows in set (0.04 sec)
+
+Query OK, 0 rows affected (0.07 sec)

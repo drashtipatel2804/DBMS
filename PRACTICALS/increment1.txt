@@ -1,0 +1,232 @@
+create database pro;
+
+create table emp 
+(
+eid int not null primary key ,
+ename varchar(50) ,
+salary int ,
+designation varchar(50) 
+);
+
+create procedure data(in id int , name varchar(50) , esalary int , desi varchar(50))
+begin
+	insert into emp values (id , name , esalary , desi ) ;
+end
+	
+call data(1,'ram', 30000,'manager')//
+
+call data(2,'nam', 25000,'emp')//
+
+call data(3,'bam', 20000,'clerk')//
+
+call data(4,'sam', 30000,'manager')//
+
+call data(5,'kam', 10000,'peon')//
+
+ select *from emp //
++-----+-------+--------+-------------+
+| eid | ename | salary | designation |
++-----+-------+--------+-------------+
+|   1 | ram   |  30000 | manager     |
+|   2 | nam   |  25000 | emp         |
+|   3 | bam   |  20000 | clerk       |
+|   4 | sam   |  30000 | manager     |
+|   5 | kam   |  10000 | peon        |
++-----+-------+--------+-------------+
+
+create procedure incr(in desi varchar(50))
+begin
+	if(desi='manager') then 
+	update emp set salary=salary+1500 where designation=desi;
+	select *from emp;
+	elseif(desi='emp') then
+	update emp set salary=salary+1000 where designation=desi;
+	select *from emp;
+	elseif(desi='clerk') then
+	update emp set salary=salary+500 where designation=desi;
+	else
+	select 'no increment';
+	end if;
+end;
+
+create procedure casei(in desi varchar(50))
+begin
+	declare inc int;
+	case desi
+		when 'manager' then
+			set inc=1000;
+		when 'emp' then
+			set inc=500;
+		when 'clerk' then 
+			set inc=200;
+		else
+			set inc=0;
+	end case;
+	update emp set salary=salary+inc where designation = desi;
+end;
+
+ select *from emp //
++-----+-------+--------+-------------+
+| eid | ename | salary | designation |
++-----+-------+--------+-------------+
+|   1 | ram   |  31000 | manager     |
+|   2 | nam   |  25000 | emp         |
+|   3 | bam   |  20000 | clerk       |
+|   4 | sam   |  31000 | manager     |
+|   5 | kam   |  10000 | peon        |
++-----+-------+--------+-------------+
+
+create procedure caseg(in id int)
+begin
+	declare c varchar(50);
+	declare inc int;
+	select designation into c from emp where eid=id;
+	case c
+		when 'manager' then
+			set inc=1000;
+		when 'emp' then
+			set inc=500;
+		when 'clerk' then 
+			set inc=200;
+		else
+			set inc=0;
+	end case;
+	update emp set salary=salary+inc where eid = id;
+end;
+
+
+create table stud
+(
+sid int not null primary key ,
+sname varchar(50) ,
+s1 int ,
+s2 int ,
+s3 int ,
+total int ,
+per float(10,2) ,
+grade char(10) 
+);
+
+create procedure data11 (in id int , name varchar(50) , m1 int , m2 int , m3 int , t int , p float(10,2) ,grade char(10) )
+begin
+	insert into stud values(id,name,m1,m2,m3,t,p,grade) ;
+end;
+
+call data11(1,'situ', 23,25,24,null,null,'null')//
+call data11(2,'mitu', 22,25,04,null,null,'null')//
+call data11(3,'ditu', 03,15,19,null,null,'null')//
+call data11(4,'fitu', 15,18,10,null,null,'null')//
+call data11(5,'kitu', 16,15,24,null,null,'null')//
+
+ select *from stud //
++-----+-------+------+------+------+-------+------+-------+
+| sid | sname | s1   | s2   | s3   | total | per  | grade |
++-----+-------+------+------+------+-------+------+-------+
+|   1 | situ  |   23 |   25 |   24 |  NULL | NULL | null  |
+|   2 | mitu  |   22 |   25 |    4 |  NULL | NULL | null  |
+|   3 | ditu  |    3 |   15 |   19 |  NULL | NULL | null  |
+|   4 | fitu  |   15 |   18 |   10 |  NULL | NULL | null  |
+|   5 | kitu  |   16 |   15 |   24 |  NULL | NULL | null  |
++-----+-------+------+------+------+-------+------+-------+
+create procedure grade(in id int)
+begin
+	declare t , m1,m2,m3  int ;
+	declare p float(10,2) ;
+	declare g char(10);
+	select total into t from stud where sid=id;
+	select per into p from stud where sid=id;
+	select grade into g from stud where sid=id;
+	select s1 into m1 from stud where sid=id;
+	select s2 into m2 from stud where sid=id;
+	select s3 into m3  from stud where sid=id;
+	set t=m1+m2+m3 ;
+	set p=(t*100)/90;
+	if (p >= 70 ) then 
+		set g='a+';
+	elseif ((p >= 60) && (p<70)) then
+		set g='a';
+	elseif((p>=50) && (p<60)) then
+		set g='b+';
+	else
+		set g='c';
+	end if;
+	update stud set total=t where sid=id;
+	update stud set per=p where sid=id;
+	update stud set grade=g where sid=id;
+end;
+
+create procedure grade2(in id int)
+
+begin
+
+	declare t , m1,m2,m3  int ;
+
+	declare p float(10,2) ;
+
+	declare g char(10);
+
+	select total into t from stud where sid=id;
+
+	select per into p from stud where sid=id;
+
+	select grade into g from stud where sid=id;
+
+	select s1 into m1 from stud where sid=id;
+
+	select s2 into m2 from stud where sid=id;
+
+	select s3 into m3  from stud where sid=id;
+
+	set t=m1+m2+m3 ;
+
+	set p=(t*100)/90;
+
+	case p
+
+		when p>=70 then
+
+			set g='a+';
+
+		when((p >= 60) && (p<70)) then
+
+			set g='a';
+
+		when((p>=50) && (p<60)) then
+
+			set g='b+';
+
+		else
+
+			set g='c';
+
+		end case;
+		
+	
+	update stud set total=t , per=p where sid=id;
+
+		update stud set grade=g where sid=id;
+	
+end;
+	
+
+	
+	
+	
+	
+		
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 

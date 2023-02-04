@@ -1,0 +1,69 @@
+Write a trigger that calculates total, percentage and grade of that student whenever record
+is inserted into student.[Total,per,grade must be null while inserting data]
+Consider Table:
+Student (id, name, class, m1, m2, m3,total,per,grade)
+
+
+create table stud 
+(
+	id int primary key,
+	name varchar(30) ,
+	class varchar(20),
+	m1 decimal(4,2),
+	m2 decimal(4,2),
+	m3 decimal(4,2),
+	total decimal(6,2),
+	per decimal(5,2),
+	grade varchar(30)
+);
+
+create trigger stud_trigger1 before insert on stud for each row
+BEGIN
+	-- declare m,n,p decimal(4,2);
+	-- declare a decimal(6,2);
+	-- declare r decimal(5,2);
+	-- declare g varchar(30);
+	-- select m1,m2,m3,total,per into m,n,p,a,r from stud;
+	set new.total=new.m1+new.m2+new.m3;
+	set new.per=new.total/3;
+	if(new.per>90)then
+		set new. grade='Distriction';
+	elseif(new.per>70)then
+		set new. grade='First class';
+	elseif(new.per>50)then
+		set new.grade='Second class';
+	else
+		set new.grade='fail';
+	end if;
+END
+
+mysql> insert into stud values(2,'zeel','2a',89,67.88,78,null,null,null)@
+Query OK, 1 row affected (0.05 sec)
+
+mysql> select * from stud@
++----+------+-------+-------+-------+-------+--------+--------+-------------+
+| id | name | class | m1    | m2    | m3    | total  | per    | grade       |
++----+------+-------+-------+-------+-------+--------+--------+-------------+
+|  1 | zeel | 2a    | 87.66 | 90.00 | 87.00 | 264.66 | 793.98 | Distriction |
+|  2 | zeel | 2a    | 89.00 | 67.88 | 78.00 | 234.88 |  78.29 | First class |
++----+------+-------+-------+-------+-------+--------+--------+-------------+
+2 rows in set (0.00 sec)
+
+
+Write a trigger that calculates inst_Amt based on installment and LoanAmount of loan
+whenever any record is inserted on Loan table.
+Consider Table :
+Loan(Cid, Lid, LoanAmount, installment, inst_amt, inst_over)
+
+
+create table loan
+(
+	cid int primary key,
+	lid int ,
+	loanAmount int,
+	installment int ,
+	inst_amt int,
+	inset_over date,
+);
+
+

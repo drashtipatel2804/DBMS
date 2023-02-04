@@ -1,0 +1,118 @@
+create table dep
+(
+did int primary key,
+dname varchar(50)
+);
+
+insert into dep values(1,'it');
+insert into dep values(2,'iit');
+insert into dep values(3,'daiict');
+
+create table emp1
+(
+eid int primary key,
+ename varchar(50),
+edes varchar(50),
+did int references dep(did)
+);
+
+
+insert into emp1 values(1,'joshi','ceo',1);
+insert into emp1 values(2,'jos','ce',1);
+insert into emp1 values(3,'jo','c',3);
+
+drop procedure p1//
+create procedure p1(in name varchar(50))
+begin
+	declare i int;
+	declare d varchar(50);
+	declare cur cursor for select did,dname from dep where  did in (select eid from emp1 where ename=name);
+	open cur ;
+			fetch from cur into i,d;
+			select i as id,d as dep;
+	close cur ;
+end;
+
+
+Consider table: Purchase (Customerid, Cust_name, Billamount)
+Create function, which takes customer id as a parameter and returns updated bill amount to be paid
+based on given criteria.  Also, show code for calling the function.
+● If bill amount less than 1000 then “No discount”.
+● If bill amount between 1000 and 2000 then give 10% of bill amount as a discount.
+● If bill amount above 2000 then 20% of bill amount as a discount.
+
+create table pur
+(
+cid int primary key,
+bill float
+);
+
+insert into pur values(1,999.0);
+insert into pur values(2,1500.0);
+insert into pur values(3,3000.0);
+drop function f1//
+create function f1(id int)
+returns float DETERMINISTIC
+begin
+	declare b float;
+	select bill into b from pur where cid=id;
+	case 
+			when (b<1000) then
+			set b=b+0;
+update pur set bill=b where cid=id;
+			when (b between 1000 and 2000) then
+			set b=(b+(b*10/100));
+update pur set bill=b where cid=id;
+			else
+			set b=(b+(b*20/100));
+update pur set bill=b where cid=id;
+	end case;
+	return b;
+end;
+
+
+Company Manger of “JIO Private Limited” want to find number of employees working in a specific
+department whose salary lies in following criteria: less than 10000, 10000-20000, 20000-30000, above
+30000. Create procedure that takes department name as a parameter and do as directed.
+Consider table: Employee (Id, Name, Salary, Department, Designation, No_of_Experience)
+Output should be:
+Salary less than 10000 = 13
+Salary between 10000-20000 = 5
+Salary between 20000-30000 = 12
+Salary greater than 30000 = 24
+
+create table e
+(
+eid int primary key,
+ename varchar(50),
+esalary int
+);
+
+insert into e values(1,'ram',9000);
+insert into e values(2,'jam',19000);
+insert into e values(3,'nam',29000);
+insert into e values(4,'dam',39000);
+insert into e values(5,'aam',9000);
+insert into e values(6,'kam',29000);
+insert into e values(7,'am',29000);
+insert into e values(8,'didi',39000);
+insert into e values(9,'d2',39000);
+insert into e values(10,'c2',39000);
+
+drop procedure p//
+create procedure p()
+begin
+	declare s int;
+	select esalary into s from e ;
+	select count(eid) as d1 from e where (s < 10000)  ;
+	select count(eid) as d2 from e where (s between 10000 and 20000);
+end; 
+	
+
+
+
+
+
+
+
+

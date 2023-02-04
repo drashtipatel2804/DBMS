@@ -1,0 +1,129 @@
+create database pro;
+use pro;
+
+drop procedure s //
+
+create table student 
+(
+sid int not null primary key ,
+sname varchar(30) not null,
+scity varchar(20),
+scontact bigint,
+sgender varchar(6) ,	
+smarks int 
+);
+drop procedure s //
+create procedure s (in id int  ,  name varchar (30) ,  city varchar(20) , contact bigint ,  gender varchar(6) ,  marks int )
+begin
+	insert into student values (id , name , city , contact , gender, marks);
+end//
+
+call s (1,'ditu','surat',9999999999,'f',55) //
+
+call s (2,'situ','bardoli',9999999998,'f',26) //
+
+call s (3,'ritu','navsari',9999999997,'f',50) //
+
+call s (4,'mitu','vapi',9999999996,'f',23) //
+
+call s (5,'kitu','surat',9999999995,'f',52) //
+
+----->Write a procedure that will display student name and contact number whose id is  
+
+
+create procedure q()
+begin
+	select sname,scontact from student where sid=4;
+end//
+
+------>Write a procedure that will display all the details of students who belong to ‘Surat city
+
+create procedure w()
+begin
+select *from student where scity='surat' ;
+end//
+
+-----> Write a procedure that will count total number of students whose marks is more 
+than 50
+
+create procedure a()
+begin
+	select count(sid) from student where smarks >50 ;
+end // 
+
+call a //
++------------+
+| count(sid) |
++------------+
+|          2 |
++------------+
+
+-----> Write a procedure that will display highest and lowest marks of students along 
+with student name.
+
+
+create procedure a1()
+begin
+	select  sname, smarks from student where smarks in (select max(smarks) from student );
+	select  sname, smarks from student where smarks in (select min(smarks) from student );
+end/
+
+mysql> call a1/
++-------+--------+
+| sname | smarks |
++-------+--------+
+| ditu  |     55 |
++-------+--------+
+1 row in set (0.04 sec)
+
++-------+--------+
+| sname | smarks |
++-------+--------+
+| mitu  |     23 |
++-------+--------+
+
+------> Write a procedure that will display student name whose marks is between 20 and 25
+
+create procedure d1()
+begin
+	select sname from student where smarks between 20 and 25 ;
+end/
+
+
+mysql> call d1 /
++-------+
+| sname |
++-------+
+| mitu  |
++-------+
+
+Write a procedure that will pass students ID and return back the students name 
+and contact number from student table
+
+create procedure d2(in id int)
+begin
+	select sname , scontact from student where sid=id;
+end;
+ call d2(3)/
++-------+------------+
+| sname | scontact   |
++-------+------------+
+| ritu  | 9999999997 |
++-------+------------+
+
+Write a procedure that will pass city and return back the student details who 
+belongs to particular city.
+
+create procedure d3(in  city varchar(50))
+begin 
+	select *from student where scity=city;
+end;
+
+
+ call d3('surat')/
++-----+-------+-------+------------+---------+--------+
+| sid | sname | scity | scontact   | sgender | smarks |
++-----+-------+-------+------------+---------+--------+
+|   1 | ditu  | surat | 9999999999 | f       |     55 |
+|   5 | kitu  | surat | 9999999995 | f       |     52 |
++-----+-------+-------+------------+---------+--------+
